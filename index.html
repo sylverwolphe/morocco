@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morocco, processing nexus: Africa supply lines and buildout, 2025–2050</title>
+<meta name="description" content="Interactive atlas of inter-African supply lines with Morocco as the processing nexus, and the infrastructure buildout from 2025 to 2050: water, coffee, trade paperwork, power export, and space, science and forest programs.">
+<meta name="theme-color" content="#0A1433">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Reem+Kufi:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<style>
+:root{
+  --ink-0:#0A1433; --ink-1:#101C40; --ink-2:#172656; --ink-3:#24356F; --ink-4:#34488A;
+  --sand:#EEE3CB; --sand-2:#BDB6CC; --sand-3:#8F8CAB;
+  --water:#2fc7fa; --coffee:#e0574e; --paper:#9382f8; --power:#e3aa0a; --frontier:#53cb7d; --industry:#ec79be; --logistics:#D9CBAE;
+  --display:"Reem Kufi", "Segoe UI", system-ui, sans-serif;
+  --body:"Alegreya Sans", "Gill Sans", "Segoe UI", system-ui, sans-serif;
+  --panel-w:400px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--ink-0);color:var(--sand);font-family:var(--body);font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow:hidden}
+a{color:var(--sand);text-decoration-color:var(--ink-4);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--sand)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--sand);outline-offset:2px;border-radius:3px}
+path.leaflet-interactive:focus,path.leaflet-interactive:focus-visible{outline:none}
+.num{font-variant-numeric:lining-nums tabular-nums}
+
+#app{display:grid;grid-template-columns:var(--panel-w) 1fr;height:100vh;height:100dvh}
+
+/* ---------- panel ---------- */
+#panel{background:var(--ink-1);border-right:1px solid var(--ink-3);display:flex;flex-direction:column;min-height:0;z-index:1000}
+.brand{padding:22px 24px 14px}
+.brand h1{font-family:var(--display);font-weight:600;font-size:27px;line-height:1.12;margin:0;letter-spacing:.005em}
+.brand p{margin:8px 0 0;color:var(--sand-2);font-size:15px;line-height:1.4;max-width:34ch}
+.tabs{display:flex;gap:2px;padding:0 16px;border-bottom:1px solid var(--ink-3)}
+.tabs button{background:none;border:0;padding:10px 8px 9px;color:var(--sand-3);cursor:pointer;font-size:15px;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--sand);border-bottom-color:var(--sand)}
+.tabs button:hover{color:var(--sand)}
+.tabpanels{flex:1;overflow-y:auto;min-height:0;scrollbar-color:var(--ink-4) transparent}
+.tp{padding:18px 24px 40px}
+.tp[hidden]{display:none}
+.tp h2{font-family:var(--display);font-weight:500;font-size:19px;line-height:1.25;margin:26px 0 8px}
+.tp h2:first-child{margin-top:4px}
+.tp p{margin:0 0 12px;max-width:62ch}
+.tp ul{margin:0 0 12px;padding-left:18px}
+.tp li{margin:0 0 7px}
+.muted{color:var(--sand-2)}
+.small{font-size:14px;line-height:1.45}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;margin:16px 0 6px}
+.fact b{display:block;font-family:var(--display);font-weight:500;font-size:22px;line-height:1.1;font-variant-numeric:lining-nums}
+.fact span{display:block;color:var(--sand-2);font-size:13.5px;line-height:1.35;margin-top:3px}
+.go{background:none;border:0;padding:0;color:var(--sand);text-decoration:underline;text-decoration-color:var(--ink-4);text-underline-offset:3px;cursor:pointer;text-align:left}
+.go:hover{text-decoration-color:var(--sand)}
+
+/* sequence */
+.seq{list-style:none;margin:6px 0 0;padding:0}
+.seq>li{display:grid;grid-template-columns:44px 1fr;gap:0 12px;padding:18px 0 20px;border-top:1px solid var(--ink-3)}
+.seq>li:first-child{border-top:0;padding-top:4px}
+.seq .n{font-family:var(--display);font-size:38px;line-height:1;font-weight:500;color:var(--sand);position:relative;padding-top:2px}
+.seq .n::after{content:"";position:absolute;left:0;top:46px;width:3px;height:calc(100% - 40px);border-radius:2px;background:var(--c)}
+.seq h3{font-family:var(--display);font-weight:500;font-size:19px;margin:0 0 4px;line-height:1.2}
+.seq .role{margin:0 0 10px;color:var(--sand-2)}
+.seq h4{font-weight:700;font-size:14.5px;margin:12px 0 4px;color:var(--sand)}
+.seq ul{list-style:none;padding:0;margin:0}
+.seq li li{position:relative;margin:0 0 5px;padding-left:14px;font-size:14.5px;line-height:1.4}
+.seq li li::before{content:"";position:absolute;left:1px;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--sand-3)}
+.seq .go{display:block}
+.seq .yrs{color:var(--sand-3);font-size:13.5px;font-variant-numeric:lining-nums}
+
+/* lines + builds lists */
+.grp{margin:20px 0 6px;font-family:var(--display);font-weight:500;font-size:16.5px}
+.grp:first-child{margin-top:2px}
+.rows{list-style:none;margin:0;padding:0}
+.rows li{margin:0}
+.row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:start;width:100%;background:none;border:0;padding:8px 6px;border-radius:6px;text-align:left;cursor:pointer;color:var(--sand)}
+.row:hover{background:var(--ink-2)}
+.row.on{background:var(--ink-2)}
+.row .t{font-size:15px;line-height:1.3}
+.row .s{display:block;color:var(--sand-3);font-size:13px;margin-top:2px}
+.row .y{color:var(--sand-3);font-size:13px;white-space:nowrap;font-variant-numeric:lining-nums tabular-nums;padding-top:2px}
+.key{display:block;height:14px;margin-top:4px}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink-3);background:none;border-radius:20px;padding:3px 10px 3px 8px;font-size:13.5px;cursor:pointer;color:var(--sand-2)}
+.chip[aria-pressed="true"]{border-color:var(--sand-3);color:var(--sand);background:var(--ink-2)}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--c);display:inline-block}
+.search{width:100%;background:var(--ink-0);border:1px solid var(--ink-3);border-radius:6px;padding:7px 10px;color:var(--sand);font:inherit;font-size:14.5px;margin:0 0 10px}
+.search::placeholder{color:var(--sand-3)}
+.glyph{width:18px;height:18px;display:block;margin:1px auto 0}
+
+/* ---------- stage ---------- */
+#stage{position:relative;display:flex;flex-direction:column;min-width:0;min-height:0}
+#mapwrap{position:relative;flex:1;min-height:0}
+#map{position:absolute;inset:0;background:var(--ink-0);z-index:0}
+.leaflet-container{background:var(--ink-0);font-family:var(--body)}
+.tiles-base{filter:brightness(1.25) sepia(1) hue-rotate(188deg) saturate(2.4) brightness(.72) contrast(1.08)}
+.tiles-labels{filter:sepia(.5) hue-rotate(185deg) saturate(.8) brightness(.95);opacity:.62}
+.leaflet-control-attribution{background:rgba(10,20,51,.78)!important;color:var(--sand-3)!important;font-size:11px!important}
+.leaflet-control-attribution a{color:var(--sand-2)!important}
+.leaflet-bar a{background:var(--ink-1)!important;color:var(--sand)!important;border-bottom-color:var(--ink-3)!important}
+.leaflet-bar{border:1px solid var(--ink-3)!important;box-shadow:none!important}
+
+/* year */
+#yearmark{position:absolute;left:22px;bottom:14px;z-index:500;pointer-events:none;text-shadow:0 2px 18px rgba(10,20,51,.9)}
+#yearmark .yr{display:block;font-family:var(--display);font-weight:600;font-size:104px;line-height:.86;letter-spacing:-.01em;font-variant-numeric:lining-nums;color:var(--sand)}
+#yearmark .yrnote{display:block;margin-top:8px;font-size:15px;color:var(--sand-2)}
+#yearmark.compact .yr{font-size:58px}
+#yearmark.compact .yrnote{font-size:13px;margin-top:4px}
+#events{position:absolute;left:12px;top:12px;z-index:500;width:min(290px,34vw);background:rgba(16,28,64,.86);border:1px solid var(--ink-3);border-radius:10px;padding:10px 12px 8px;backdrop-filter:blur(4px)}
+#events h2{font-family:var(--display);font-weight:500;font-size:15px;margin:0 0 4px}
+#events ul{list-style:none;margin:0;padding:0;max-height:min(260px,32vh);overflow:auto;scrollbar-color:var(--ink-4) transparent}
+#events li{margin:0}
+#events button{display:flex;gap:8px;align-items:baseline;background:none;border:0;padding:4px 0;text-align:left;cursor:pointer;color:var(--sand);font-size:14px;line-height:1.3;width:100%}
+#events button:hover{color:#fff}
+#events .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--c);transform:translateY(-1px)}
+#events .what{color:var(--sand-3);font-size:12.5px;display:block}
+#events .empty{color:var(--sand-3);font-size:14px;margin:2px 0 4px}
+#events .more{color:var(--sand-3);font-size:12.5px;padding:3px 0 2px 16px}
+
+/* layers */
+#layers{position:absolute;top:12px;right:12px;z-index:600;width:236px;background:rgba(16,28,64,.92);border:1px solid var(--ink-3);border-radius:10px;padding:8px 12px 9px;backdrop-filter:blur(4px)}
+#layers summary{cursor:pointer;font-family:var(--display);font-weight:500;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+#layers summary::-webkit-details-marker{display:none}
+#layers summary::after{content:"Hide";font-family:var(--body);font-size:13px;color:var(--sand-3)}
+#layers:not([open]) summary::after{content:"Show"}
+.lg{margin:8px 0 0;padding:0;list-style:none}
+.lg li{margin:0}
+.lg label{display:grid;grid-template-columns:14px 34px 1fr;align-items:center;gap:7px;padding:2px 0;font-size:13.5px;cursor:pointer}
+.lg input{margin:0;accent-color:var(--sand)}
+.lg svg{display:block}
+.lg-h{font-size:13px;color:var(--sand-3);margin:10px 0 2px}
+.status-key{display:grid;grid-template-columns:18px 1fr;gap:2px 8px;align-items:center;font-size:13px;line-height:1.3;margin:4px 0 0}
+.opts label{display:flex;gap:8px;align-items:center;font-size:13px;padding:1px 0;cursor:pointer;color:var(--sand-2)}
+.opts input{margin:0;accent-color:var(--sand)}
+.pp-open #events,.pp-open #layers{opacity:.18;pointer-events:none;transition:opacity .15s}
+.pp-open .leaflet-tooltip{display:none}
+#clearSel{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:600;background:var(--ink-1);border:1px solid var(--sand-3);border-radius:20px;padding:4px 14px;font-size:14px;cursor:pointer}
+#clearSel[hidden]{display:none}
+#panelToggle{display:none}
+
+/* ---------- markers ---------- */
+.mkw{background:none;border:0}
+.mk{display:block;width:18px;height:18px;position:relative}
+.mk::before{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px var(--ink-0)}
+.mk-dia::before{inset:5px;border-radius:1px;transform:rotate(45deg)}
+.mk-origin::before{inset:5.5px}
+.mk.st-building::before{background:var(--ink-0);border:2px solid var(--c);box-shadow:0 0 0 1.5px var(--ink-0)}
+.mk.st-building::after{content:"";position:absolute;inset:7.5px;border-radius:50%;background:var(--c)}
+.mk-dia.st-building::after{border-radius:0;transform:rotate(45deg);inset:8px}
+.mk.st-future{opacity:.42}
+.mk.st-future::before{background:transparent;border:1.5px solid var(--c);box-shadow:none}
+.mk.st-shelved::before{background:transparent;border:0;box-shadow:none}
+.mk.st-shelved::after{content:"×";position:absolute;inset:0;display:grid;place-items:center;color:var(--sand-3);font-size:17px;line-height:1}
+.mk-hub{width:22px;height:22px}
+.mk-hub::before{display:none}
+.mk-hub svg{position:absolute;inset:0;width:22px;height:22px;overflow:visible}
+.mk-hub svg rect{fill:var(--c);stroke:var(--ink-0);stroke-width:1.6}
+.mk-hub.st-building svg rect{fill:var(--ink-0);stroke:var(--c);stroke-width:1.8}
+.mk-hub.st-future{opacity:.42}
+.mk-hub.st-future svg rect{fill:transparent;stroke:var(--c);stroke-width:1.2}
+.has-sel .mkw:not(.is-sel){opacity:.28}
+.mkw.is-sel .mk{transform:scale(1.35)}
+.forest{transition:none}
+.has-sel .forest{opacity:.3}
+
+/* ---------- lines ---------- */
+.ln{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ln-flow{animation:flow var(--dur,2.6s) linear infinite}
+.ln-flow.m-sea{stroke-dasharray:1 9;--dl:-40}
+.ln-flow.m-pipeline{stroke-dasharray:10 6;--dl:-48}
+.ln-flow.m-hvdc{stroke-dasharray:14 4 2 4;--dl:-48}
+.ln-flow.m-cable{stroke-dasharray:6 5;--dl:-44}
+.ln-flow.m-grid{stroke-dasharray:4 4;--dl:-40}
+.ln-flow.m-road{stroke-dasharray:8 6;--dl:-42}
+.ln-flow.m-rail{stroke-dasharray:2 4 8 4;--dl:-36}
+.ln-flow.m-canal{stroke-dasharray:12 5;--dl:-51}
+.ln-flow.m-data{stroke-dasharray:.5 6;--dl:-39}
+@keyframes flow{to{stroke-dashoffset:var(--dl)}}
+.ln.is-building{animation:none;stroke-dasharray:3 6;opacity:.7}
+.ln.is-ghost{animation:none;stroke-dasharray:2 7;opacity:.16}
+.ln.is-shelved{animation:none;stroke-dasharray:2 6;opacity:.45;stroke:#8F8CAB}
+.no-motion .ln-flow{animation:none}
+.has-sel .ln:not(.is-sel){opacity:.1}
+.has-sel .ln.is-sel{opacity:1}
+.ln-hit{stroke:#000;stroke-opacity:0}
+
+/* ---------- popups & tooltips ---------- */
+.leaflet-popup-content-wrapper{background:var(--ink-1);color:var(--sand);border:1px solid var(--ink-4);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.leaflet-popup-tip{background:var(--ink-1);border:1px solid var(--ink-4)}
+.leaflet-popup-content{margin:14px 16px 12px;font-size:14.5px;line-height:1.45;width:300px!important}
+.leaflet-container a.leaflet-popup-close-button{color:var(--sand-3)}
+.pp-k{display:flex;align-items:center;gap:7px;color:var(--sand-2);font-size:13px}
+.pp-k i{width:9px;height:9px;border-radius:50%;background:var(--c);display:inline-block}
+.pp h3{font-family:var(--display);font-weight:500;font-size:17px;line-height:1.25;margin:5px 0 8px}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 9px}
+.bdg{border:1px solid var(--ink-4);border-radius:12px;padding:1px 8px;font-size:12.5px;color:var(--sand-2)}
+.bdg.real{border-color:var(--sand-3);color:var(--sand)}
+.pp dl{display:grid;grid-template-columns:78px 1fr;gap:3px 10px;margin:0 0 8px;font-size:13.5px}
+.pp dt{color:var(--sand-3)}
+.pp dd{margin:0}
+.pp p{margin:0 0 7px}
+.pp .why{color:var(--sand-2)}
+.pp .ws{font-size:13px;color:var(--sand-3);border-top:1px solid var(--ink-3);padding-top:7px;margin-top:8px}
+.leaflet-tooltip.tt{background:var(--ink-1);color:var(--sand);border:1px solid var(--ink-4);box-shadow:none;font-family:var(--body);font-size:13.5px;padding:3px 8px;border-radius:6px}
+.leaflet-tooltip.tt::before{display:none}
+
+/* ---------- timeline ---------- */
+#timeline{background:var(--ink-1);border-top:1px solid var(--ink-3);padding:10px 16px 10px;z-index:700}
+.tl{display:grid;grid-template-columns:auto 176px 1fr;gap:0 12px;align-items:start}
+#play{grid-row:1 / span 3;align-self:center;background:var(--sand);color:var(--ink-0);border:0;border-radius:22px;padding:7px 16px;font-weight:700;cursor:pointer;min-width:78px}
+#play:hover{background:#fff}
+.tl-labels{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--sand-2);line-height:13px}
+.tl-labels span{height:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-labels .sp{height:19px}
+.tl-labels .msl{height:16px;line-height:16px;color:var(--sand-3)}
+.track{position:relative;min-width:0;margin:0 16px 0 10px}
+.bars{display:grid;grid-auto-rows:13px;gap:3px;position:relative}
+.bar{position:relative}
+.bar i{position:absolute;top:3px;height:7px;border-radius:4px;background:var(--c)}
+.bar i.tail{opacity:.28}
+.axis{position:relative;height:18px;margin-top:4px;border-top:1px solid var(--ink-3)}
+.axis span{position:absolute;top:3px;transform:translateX(-50%);font-size:12px;color:var(--sand-3);font-variant-numeric:lining-nums tabular-nums}
+.axis span.tick{top:-1px;width:1px;height:4px;background:var(--ink-4);transform:none}
+.today{position:absolute;top:-2px;bottom:18px;width:0;border-left:1px dashed var(--sand-3);pointer-events:none}
+.today b{position:absolute;bottom:2px;left:4px;font-weight:400;font-size:12px;color:var(--sand-2);white-space:nowrap}
+.cursor{position:absolute;top:-4px;bottom:14px;width:2px;margin-left:-1px;background:var(--sand);border-radius:1px;pointer-events:none;box-shadow:0 0 0 2px var(--ink-1)}
+#yr{position:absolute;left:0;top:-4px;width:100%;height:calc(100% - 12px);margin:0;padding:0;opacity:0;cursor:ew-resize}
+.track:focus-within .cursor{box-shadow:0 0 0 2px var(--ink-1),0 0 0 4px var(--sand)}
+.ms{position:relative;height:16px;margin-top:0}
+.ms button{position:absolute;top:2px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:var(--ink-0);border:2px solid var(--sand-2);padding:0;cursor:pointer}
+.ms button.sc{border-style:dotted;border-color:var(--sand-3)}
+.ms button:hover{background:var(--sand)}
+
+.ind{display:flex;gap:10px;margin-top:8px;overflow-x:auto;padding-bottom:2px}
+.tile{flex:1 0 196px;min-width:196px;background:var(--ink-0);border:1px solid var(--ink-3);border-radius:8px;padding:6px 10px 6px;display:grid;grid-template-columns:auto 1fr;gap:0 10px;align-items:end}
+.tile .lab{grid-column:1 / -1;font-size:12.5px;color:var(--sand-2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .val{display:block;font-weight:700;font-size:19px;line-height:1.15;white-space:nowrap;font-variant-numeric:lining-nums tabular-nums}
+.tile .val small{font-weight:400;font-size:12.5px;color:var(--sand-2);margin-left:3px}
+.tile .prov{display:block;font-size:11.5px;color:var(--sand-3);white-space:nowrap}
+.tile svg{width:100%;min-width:60px;height:32px;display:block;cursor:crosshair}
+
+/* ---------- small screens ---------- */
+@media (max-width:900px){
+  body{overflow:auto}
+  #app{display:block;height:auto}
+  #stage{height:100vh;height:100dvh}
+  #panel{position:fixed;inset:0 auto 0 0;width:min(92vw,420px);transform:translateX(-102%);transition:transform .25s ease;box-shadow:0 0 40px rgba(0,0,0,.5)}
+  #panel.open{transform:none}
+  #panelToggle{display:block;position:absolute;top:12px;left:12px;z-index:800;background:var(--sand);color:var(--ink-0);border:0;border-radius:20px;padding:6px 14px;font-weight:700;cursor:pointer}
+  #panelClose{display:inline-block!important}
+  #layers{width:220px;top:56px}
+  #yearmark .yr{font-size:72px}
+  #events{display:none}
+  .tl{grid-template-columns:auto 1fr}
+  .tl-labels{display:none}
+  .ms,.today b{display:none}
+  #panel{z-index:1200}
+  .tile{flex-basis:150px;min-width:150px}
+}
+@media (prefers-reduced-motion:reduce){
+  .ln-flow{animation:none}
+  #panel{transition:none}
+}
+#panelClose{display:none;float:right;background:none;border:1px solid var(--ink-3);border-radius:16px;padding:2px 10px;font-size:13px;cursor:pointer;color:var(--sand-2);margin-top:2px}
+</style>
+</head>
+<body>
+<noscript><p style="padding:24px">This atlas needs JavaScript to draw the map and timeline.</p></noscript>
+<div id="app">
+  <aside id="panel" aria-label="Plan">
+    <header class="brand">
+      <button id="panelClose" type="button">Close</button>
+      <h1>Morocco, processing nexus</h1>
+      <p>Inter-African supply lines and the infrastructure that carries them, 2025 to 2050</p>
+    </header>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" id="t-arg" aria-controls="p-arg" aria-selected="true">Argument</button>
+      <button role="tab" id="t-seq" aria-controls="p-seq" aria-selected="false" tabindex="-1">Sequence</button>
+      <button role="tab" id="t-lin" aria-controls="p-lin" aria-selected="false" tabindex="-1">Lines</button>
+      <button role="tab" id="t-bld" aria-controls="p-bld" aria-selected="false" tabindex="-1">Builds</button>
+      <button role="tab" id="t-not" aria-controls="p-not" aria-selected="false" tabindex="-1">Notes</button>
+    </nav>
+    <div class="tabpanels">
+      <section class="tp" id="p-arg" role="tabpanel" aria-labelledby="t-arg"></section>
+      <section class="tp" id="p-seq" role="tabpanel" aria-labelledby="t-seq" hidden></section>
+      <section class="tp" id="p-lin" role="tabpanel" aria-labelledby="t-lin" hidden></section>
+      <section class="tp" id="p-bld" role="tabpanel" aria-labelledby="t-bld" hidden></section>
+      <section class="tp" id="p-not" role="tabpanel" aria-labelledby="t-not" hidden></section>
+    </div>
+  </aside>
+
+  <main id="stage">
+    <div id="mapwrap">
+      <div id="map" role="application" aria-label="Map of supply lines and infrastructure"></div>
+      <button id="panelToggle" type="button">Read the plan</button>
+      <button id="clearSel" type="button" hidden>Clear highlight</button>
+      <details id="layers" open>
+        <summary>Layers</summary>
+        <ul class="lg" id="lg"></ul>
+        <div class="lg-h">Markers</div>
+        <div class="status-key" id="statusKey"></div>
+        <div class="lg-h">Show</div>
+        <div class="opts">
+          <label><input type="checkbox" id="optGhost" checked> Future builds as outlines</label>
+          <label><input type="checkbox" id="optReal"> Real projects only</label>
+          <label><input type="checkbox" id="optShelved"> Shelved projects</label>
+          <label><input type="checkbox" id="optMotion" checked> Animated flows</label>
+        </div>
+      </details>
+      <div id="events" aria-live="polite"></div>
+      <div id="yearmark"><span class="yr num" id="yearBig">2026</span><span class="yrnote" id="yearNote"></span></div>
+    </div>
+
+    <section id="timeline" aria-label="Timeline">
+      <div class="tl">
+        <button id="play" type="button">Play</button>
+        <div class="tl-labels" id="tlLabels"></div>
+        <div class="track" id="track">
+          <div class="bars" id="bars"></div>
+          <div class="axis" id="axis"></div>
+          <div class="today" id="today" title="November 2026: reported status to the left, scenario to the right"><b>Today</b></div>
+          <div class="cursor" id="cursor"></div>
+          <input type="range" id="yr" min="2025" max="2050" step="1" value="2026" aria-label="Year">
+          <div class="ms" id="ms"></div>
+        </div>
+      </div>
+      <div class="ind" id="ind"></div>
+    </section>
+  </main>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+(function(){
+'use strict';
+
+/* =========================================================
+   1. Sectors (fixed order; colors validated for all-pairs
+      CVD and normal-vision separation on the indigo map)
+   ========================================================= */
+const SECT = {
+  water:     {label:'Water',                     c:'#2fc7fa', d:1},
+  coffee:    {label:'Coffee',                    c:'#e0574e', d:2},
+  paper:     {label:'Bureaucratic backing',      c:'#9382f8', d:3},
+  power:     {label:'Power, gas and resale',     c:'#e3aa0a', d:4},
+  frontier:  {label:'Space, science, forests',   c:'#53cb7d', d:5},
+  industry:  {label:'Minerals and industry',     c:'#ec79be', d:0},
+  logistics: {label:'Ports and corridors',       c:'#D9CBAE', d:0}
+};
+const ORDER = ['water','coffee','paper','power','frontier','industry','logistics'];
+const MODES = {
+  sea:'Sea lane', pipeline:'Pipeline', hvdc:'HVDC line', cable:'Subsea cable', grid:'Grid line',
+  road:'Road', rail:'Railway', canal:'Water transfer', data:'Data or service link'
+};
+const MODE_W = {sea:2.2, pipeline:3, hvdc:3.2, cable:2.6, grid:2.2, road:2.4, rail:2.4, canal:3.2, data:1.6};
+const TODAY = 2026, Y0 = 2025, Y1 = 2050;
+
+/* =========================================================
+   2. Geometry helpers
+   ========================================================= */
+const R = a => a.slice().reverse();
+function J(){ const out=[]; for(const part of arguments){ for(const p of part){ const q=out[out.length-1]; if(!q||q[0]!==p[0]||q[1]!==p[1]) out.push(p);} } return out; }
+function smooth(pts, seg){
+  seg = seg||6; if(pts.length<3) return pts;
+  const out=[];
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[i-1]||pts[i], p1=pts[i], p2=pts[i+1], p3=pts[i+2]||p2;
+    for(let t=0;t<seg;t++){
+      const s=t/seg, s2=s*s, s3=s2*s;
+      const f=(a,b,c,d)=>0.5*((2*b)+(-a+c)*s+(2*a-5*b+4*c-d)*s2+(-a+3*b-3*c+d)*s3);
+      out.push([f(p0[0],p1[0],p2[0],p3[0]), f(p0[1],p1[1],p2[1],p3[1])]);
+    }
+  }
+  out.push(pts[pts.length-1]); return out;
+}
+function arc(a,b,bend){
+  bend = bend==null?0.2:bend;
+  const mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2, dx=b[0]-a[0], dy=b[1]-a[1];
+  const c=[mx-dy*bend, my+dx*bend], out=[];
+  for(let i=0;i<=36;i++){ const t=i/36, u=1-t; out.push([u*u*a[0]+2*u*t*c[0]+t*t*b[0], u*u*a[1]+2*u*t*c[1]+t*t*b[1]]); }
+  return out;
+}
+
+/* places */
+const PL = {
+  tmed:[35.885,-5.50], casa:[33.61,-7.60], jorf:[33.12,-8.64], kenitra:[34.26,-6.62], rabat:[34.02,-6.84],
+  benguerir:[32.22,-7.93], agadir:[30.42,-9.60], dakhlaPort:[24.00,-15.86], dakhla:[23.70,-15.94],
+  guerguerat:[21.37,-16.96], nouakchott:[18.09,-15.97], dakar:[14.68,-17.43], bamako:[12.64,-8.00],
+  niamey:[13.51,2.11], ouaga:[12.37,-1.52], ndjamena:[12.13,15.06], accra:[5.60,-0.19], abuja:[9.06,7.49],
+  kampala:[0.33,32.58], addis:[9.01,38.75], abidjan:[5.27,-4.00], douala:[4.05,9.69], kigali:[-1.95,30.06],
+  brussels:[50.85,4.35], praia:[14.93,-23.51], nairobi:[-1.29,36.82]
+};
+
+/* sea lanes and corridors (schematic, drawn to stay offshore) */
+const S = {
+  medSuez:[[35.885,-5.50],[35.95,-5.2],[36.0,-3.5],[36.6,0.5],[37.4,5.0],[37.6,9.5],[36.7,12.5],[35.2,18.0],[33.8,24.0],[32.8,29.5],[31.3,32.33],[29.9,32.57],[27.6,33.9],[24.5,36.0],[20.0,38.8],[15.5,41.6],[12.6,43.4]],
+  babMombasa:[[12.6,43.4],[12.3,45.5],[11.8,51.6],[6.0,50.5],[1.0,46.5],[-3.5,41.5],[-4.06,39.70]],
+  djibBab:[[11.6,43.15],[12.0,43.4],[12.6,43.4]],
+  darJoin:[[-6.82,39.32],[-6.3,39.75],[-5.0,40.3],[-3.5,41.5]],
+  lagosAbj:[[6.40,3.40],[6.1,2.4],[5.9,1.2],[5.4,0.0],[4.5,-2.0],[5.27,-4.0]],
+  doualaLagos:[[4.05,9.69],[3.95,9.4],[4.2,8.6],[4.1,7.0],[4.2,5.5],[5.8,4.2],[6.40,3.40]],
+  abjDakar:[[5.27,-4.0],[4.6,-6.5],[4.3,-8.5],[5.5,-11.0],[7.3,-13.6],[9.2,-14.8],[11.5,-17.2],[13.8,-17.6],[14.5,-17.35],[14.68,-17.43]],
+  dakarDakhla:[[14.68,-17.43],[14.55,-17.45],[14.65,-17.68],[15.5,-17.7],[18.0,-16.6],[20.6,-17.4],[22.5,-17.0],[23.98,-16.05]],
+  dakhlaCasa:[[23.98,-16.05],[25.5,-15.6],[26.8,-14.4],[27.9,-13.4],[29.0,-11.4],[30.6,-10.1],[32.0,-9.8],[33.0,-9.0],[33.61,-7.62]],
+  casaTmed:[[33.61,-7.62],[34.3,-6.95],[35.0,-6.5],[35.6,-6.2],[35.85,-5.98],[35.93,-5.70],[35.885,-5.50]],
+  casaKenitra:[[33.61,-7.62],[34.0,-7.0],[34.27,-6.70]],
+  lobitoWest:[[-12.33,13.57],[-11.5,12.8],[-8.0,12.3],[-5.0,11.0],[-2.0,8.8],[0.0,5.5],[2.0,3.5],[3.4,1.0],[3.8,-2.5],[4.3,-8.5]],
+  tmedRotterdam:[[35.885,-5.50],[35.95,-5.75],[36.3,-7.5],[36.8,-9.3],[39.0,-9.9],[42.5,-9.8],[44.5,-6.0],[47.0,-5.6],[48.6,-5.7],[49.8,-3.0],[50.3,0.0],[51.0,1.6],[51.8,3.2],[51.95,4.05]],
+  rotterdamHamburg:[[51.95,4.05],[52.6,3.7],[53.6,5.5],[54.0,7.5],[53.9,8.7],[53.55,9.95]],
+  tmedMarseille:[[35.885,-5.50],[35.95,-5.2],[36.0,-3.5],[36.8,-1.0],[37.6,1.5],[38.6,3.8],[40.6,4.9],[42.2,5.2],[43.31,5.36]],
+  tmedAlgeciras:[[35.885,-5.50],[36.0,-5.45],[36.12,-5.43]],
+  /* overland feeders */
+  kampalaMombasa:[[0.33,32.58],[0.45,33.2],[0.52,35.27],[-0.3,36.07],[-1.29,36.82],[-2.6,38.1],[-3.4,38.6],[-4.06,39.67]],
+  addisDjib:[[9.01,38.75],[9.6,41.86],[11.6,43.15]],
+  kigaliDar:[[-1.95,30.06],[-2.6,31.6],[-3.9,32.93],[-6.17,35.74],[-6.82,37.66],[-6.82,39.30]],
+  kolweziLobito:[[-10.71,25.47],[-10.70,22.33],[-11.22,21.64],[-11.78,19.92],[-12.38,16.93],[-12.78,15.74],[-12.35,13.55]],
+  zambiaLink:[[-12.53,27.85],[-12.2,25.5],[-11.6,23.3],[-11.22,21.64]],
+  goulaminaDakar:[[11.35,-7.35],[12.64,-8.00],[13.03,-9.49],[14.45,-11.44],[13.77,-13.67],[14.2,-15.9],[14.79,-16.93],[14.68,-17.43]],
+  cottonAbj:[[12.39,-5.46],[11.18,-4.30],[9.97,-5.15],[7.69,-5.03],[5.32,-4.02]],
+  parakouCotonou:[[9.34,2.63],[7.9,2.45],[6.37,2.39],[6.1,2.4]],
+  /* Sahel land corridor (schematic) */
+  dakhlaNkc:[[23.70,-15.94],[22.6,-16.25],[21.37,-16.96],[20.0,-16.2],[18.09,-15.97]],
+  espoir:[[18.09,-15.97],[17.55,-14.69],[17.05,-13.92],[16.62,-11.40],[16.66,-9.6],[16.62,-7.26]],
+  nemaBamako:[[16.62,-7.26],[15.17,-7.29],[12.64,-8.00]],
+  bamakoOuaga:[[12.64,-8.00],[11.18,-4.30],[12.37,-1.52]],
+  bamakoNdj:[[12.64,-8.00],[13.43,-6.27],[14.49,-4.20],[16.27,-0.04],[13.51,2.11],[13.80,8.99],[12.13,15.06]],
+  desertLink:[[26.74,-11.67],[25.24,-11.60],[22.73,-12.47],[20.52,-13.05],[18.55,-11.42],[16.62,-11.40]],
+  /* Morocco domestic */
+  tdx:[[29.70,-9.73],[28.99,-10.06],[28.44,-11.10],[27.15,-13.20],[26.13,-14.48],[24.9,-14.9],[23.70,-15.93]],
+  hsr:[[35.77,-5.80],[35.0,-6.1],[34.26,-6.58]],
+  lgv:[[34.26,-6.58],[34.0,-6.83],[33.59,-7.60],[33.0,-7.62],[32.3,-7.95],[31.63,-8.00]],
+  wh1:[[34.25,-6.35],[34.15,-6.55],[34.02,-6.65],[33.90,-6.74]],
+  wh2:[[33.90,-6.74],[33.55,-7.0],[33.15,-7.3],[32.75,-7.5],[32.48,-7.63]],
+  wh3:[[35.45,-5.10],[35.1,-5.3],[34.7,-5.6],[34.35,-5.9],[34.25,-6.35]],
+  hvdc:[[24.9,-14.85],[26.13,-14.4],[27.1,-13.1],[28.4,-11.1],[29.0,-10.0],[29.7,-9.7],[30.4,-9.3],[31.5,-8.8],[33.0,-7.6],[33.45,-7.52]],
+  b400:[[26.13,-14.40],[27.05,-12.9],[28.3,-10.8],[29.3,-9.5],[30.3,-8.7],[31.6,-7.98]],
+  /* power interconnections */
+  spain:[[35.80,-5.47],[35.97,-5.55],[36.06,-5.62],[36.18,-5.70]],
+  spain3:[[35.84,-5.40],[35.98,-5.47],[36.10,-5.49],[36.25,-5.54]],
+  portugal:[[35.22,-6.30],[36.2,-7.6],[37.0,-8.4],[37.5,-9.1],[37.95,-8.87]],
+  france:[[35.15,-2.95],[36.3,-1.5],[37.4,1.2],[38.5,3.5],[40.5,4.9],[42.0,5.2],[43.28,5.33]],
+  sila:[[28.85,-10.95],[30.8,-11.4],[33.5,-10.6],[36.5,-10.0],[39.0,-10.2],[42.0,-10.0],[44.5,-6.0],[47.0,-5.6],[48.6,-5.7],[49.8,-3.0],[50.3,0.0],[51.0,1.6],[51.8,2.8],[53.0,4.0],[53.8,6.5],[54.0,8.3],[53.92,9.12]],
+  xlinks:[[28.85,-10.95],[30.8,-11.4],[33.5,-10.6],[36.5,-10.0],[39.0,-10.2],[42.0,-10.0],[44.5,-6.5],[47.5,-6.5],[49.5,-6.6],[50.5,-5.9],[51.05,-4.3],[51.01,-4.12]],
+  dakhlaMaur:[[23.75,-15.90],[22.6,-16.10],[21.6,-16.45],[21.27,-16.51]],
+  maurNkc:[[21.27,-16.51],[20.3,-16.2],[18.9,-15.95],[18.09,-15.97]],
+  nkcSen:[[18.09,-15.97],[17.0,-15.9],[16.0,-16.2],[15.07,-16.85]],
+  nkcKiffa:[[18.09,-15.97],[17.55,-14.69],[17.05,-13.92],[16.62,-11.40]],
+  spine:[[16.62,-11.40],[16.66,-9.6],[16.62,-7.26],[14.49,-4.20],[14.2,-1.5],[13.51,2.11]],
+  spineB:[[16.62,-7.26],[15.17,-7.29],[12.64,-8.00]],
+  /* gas */
+  aagp1:[[16.25,-16.95],[17.2,-16.4],[18.09,-16.2],[19.8,-16.6],[20.9,-17.15],[22.4,-16.7],[23.75,-16.1],[25.4,-15.2],[26.2,-14.6],[27.1,-13.35],[28.4,-11.2],[29.3,-10.2],[30.4,-9.7],[31.5,-9.75],[32.3,-9.3],[33.1,-8.7],[33.65,-7.45],[34.3,-6.7],[35.0,-6.0],[35.5,-5.8]],
+  aagp2:[[5.60,-0.10],[5.0,-2.0],[5.20,-4.0]],
+  aagp3:[[5.20,-4.0],[4.7,-7.5],[6.3,-10.8],[8.4,-13.2],[9.5,-13.8],[11.8,-15.6],[13.4,-16.6],[14.6,-17.3],[15.5,-16.95],[16.25,-16.95]],
+  aagp4:[[4.90,6.20],[6.2,3.9],[6.25,2.4],[6.05,1.2],[5.60,-0.10]],
+  gme:[[34.01,-2.03],[34.2,-3.6],[34.3,-5.0],[34.9,-5.6],[35.6,-5.72],[35.95,-5.62],[36.05,-5.60],[36.6,-5.4],[37.9,-4.8]],
+  nh3:[[27.0,-13.6],[27.6,-13.9],[29.0,-12.4],[31.0,-11.0],[36.0,-10.5],[42.0,-10.0],[44.5,-6.0],[47.0,-5.6],[48.6,-5.7],[49.8,-3.0],[50.3,0.0],[51.0,1.6],[51.8,3.2],[51.95,4.05]],
+  akwaJorf:[[4.55,7.75],[4.2,7.5],[4.1,7.0],[4.2,5.5],[5.8,4.2],[6.40,3.40]]
+};
+const WEST_UP = J(S.lagosAbj, S.abjDakar, S.dakarDakhla, S.dakhlaCasa);          // Lagos to Casablanca
+const EAST_UP = J(R(S.babMombasa), R(S.medSuez));                                   // Mombasa to Tanger Med
+const casaToJorf = [[33.61,-7.62],[33.4,-8.1],[33.12,-8.70]];
+const JORF_TMED = J(R(casaToJorf), S.casaTmed);
+
+/* =========================================================
+   3. Builds (nodes). real:1 = existing or officially planned
+      project. real:0 = a proposal in this plan.
+      y0 = start or announcement, y1 = online. y1o:1 = y1 is an
+      official date; otherwise a scenario year.
+   ========================================================= */
+const NODES = [
+ /* ---------- water (deliverable 1) ---------- */
+ {id:'w_casa', s:'water', n:'Casablanca–Settat seawater desalination plant', ll:[33.40,-8.18], real:1, y0:2024, y1:2027, y1o:1,
+  cap:'200 Mm³/yr in phase 1, rising to 300 Mm³/yr; about 7.5 million people served',
+  now:'Construction launched June 2024. ONEE put phase 1 at 81% complete in July 2026, and the water minister targets entry into service in February 2027. Renewable-powered.'},
+ {id:'w_agadir', s:'water', n:'Agadir–Chtouka desalination plant', ll:[30.10,-9.63], real:1, y0:2022, y1:2022,
+  cap:'275,000 m³/day, expandable to 400,000', now:'Operating; shared between drinking water and irrigation in the Souss.'},
+ {id:'w_rabat', s:'water', n:'Rabat desalination plant', ll:[34.05,-6.92], real:1, y0:2025, y1:2027, y1o:1,
+  cap:'Part of four plants (with Casablanca, Tangier, Nador) adding about 540–567 Mm³/yr', now:'Under construction; commissioning expected before 2027.'},
+ {id:'w_tanger', s:'water', n:'Tangier desalination plant', ll:[35.78,-5.97], real:1, y0:2025, y1:2027, y1o:1,
+  cap:'Part of the four-plant 2027 tranche', now:'Under construction; commissioning expected before 2027.'},
+ {id:'w_nador', s:'water', n:'Nador desalination plant', ll:[35.21,-2.90], real:1, y0:2025, y1:2027, y1o:1,
+  cap:'Part of the four-plant 2027 tranche', now:'Under construction; commissioning expected before 2027.'},
+ {id:'w_ocp', s:'water', n:'OCP Green Water desalination (Jorf Lasfar, Safi, south Casablanca)', ll:[33.05,-8.55], real:1, y0:2022, y1:2024,
+  cap:'Casablanca South unit: 60 Mm³/yr', now:'Operating on clean energy; serves OCP sites and supplies drinking water to Safi, El Jadida and south Casablanca.'},
+ {id:'w_dakhla', s:'water', n:'Dakhla desalination for irrigation, with dedicated wind farm', ll:[23.83,-15.88], real:1, y0:2022, y1:2027, ws:1,
+  cap:'37 Mm³/yr', now:'The water minister reported it 78% built in 2025.'},
+ {id:'w_tiznit', s:'water', n:'Tiznit mega-desalination plant', ll:[29.80,-9.86], real:1, y0:2026, y1:2030,
+  cap:'350 Mm³/yr, about MAD 10bn; urban supply and southern farmland', now:'Studies under way; tender expected around mid-2026.'},
+ {id:'w_twin', s:'water', n:'National water-grid control centre and digital twin', ll:[33.93,-6.78], real:0, y0:2027, y1:2029,
+  cap:'Real-time dispatch of dams, transfers and desalination output', why:'Turns separate plants and pipes into one water grid that can be balanced like an electricity grid.'},
+ {id:'w_kit', s:'water', n:'Desalination equipment and membrane works', ll:[33.70,-7.36], real:0, y0:2027, y1:2030,
+  cap:'Pumps, pressure vessels, membranes; containerised export units', why:'Builds on the official push to 70% local content in desalination by 2030, then sells the kit south.'},
+ {id:'w_brine', s:'water', n:'Brine-to-minerals park', ll:[32.98,-8.78], real:0, y0:2030, y1:2033,
+  cap:'Salts, magnesium and bromine recovery; lithium-from-brine research', why:'Turns the desalination program’s brine from a disposal cost into feedstock.'},
+ {id:'w_reuse', s:'water', n:'Free-zone water-reuse loop, Tanger Med industrial platform', ll:[35.79,-5.66], real:0, y0:2028, y1:2031,
+  cap:'Treated wastewater for cooling and process water', why:'Keeps coffee, auto and battery processing off the drinking-water budget.'},
+ {id:'w_nkc', s:'water', n:'Morocco-built desalination for Nouakchott', ll:[18.12,-16.06], real:0, y0:2031, y1:2034,
+  cap:'Build–operate partnership; scenario 50 Mm³/yr', why:'First export of the water stack as a service, along the same corridor as power and trade.'},
+ {id:'w_praia', s:'water', n:'Desalination partnership, Praia (Cabo Verde)', ll:[14.93,-23.51], real:0, y0:2032, y1:2035,
+  cap:'Island-scale plants with Moroccan operation and maintenance', why:'A small, fast reference project for Atlantic island states.'},
+
+ /* ---------- coffee (deliverable 2) ---------- */
+ {id:'c_tmz', s:'coffee', hub:1, n:'Tanger Med coffee processing and compliance zone', ll:[35.82,-5.56], real:0, y0:2027, y1:2030,
+  cap:'Scenario: 5 kt/yr pilot in 2027, 30 kt in 2030, 90 kt in 2035, 250 kt by 2050',
+  why:'Bonded storage, EUDR due-diligence statements, roasting, soluble coffee, blending and packing for EU and Middle East buyers, a ferry ride from Algeciras.'},
+ {id:'c_casa', s:'coffee', n:'Casablanca grading lab and specialty roasting cluster', ll:[33.55,-7.50], real:0, y0:2028, y1:2029,
+  cap:'Cupping and grading lab, shared roasting lines for mid-size roasters', why:'Builds on about 80 existing Moroccan roasters, fewer than ten of them at industrial scale (CBI).'},
+ {id:'c_decaf', s:'coffee', n:'Water-process decaf and soluble-coffee plant', ll:[35.66,-5.74], real:0, y0:2031, y1:2033,
+  cap:'Scenario 20 kt/yr', why:'Uses desalinated water and solar process heat: the direct link back to deliverable 1.'},
+ {id:'c_dkh', s:'coffee', n:'Dakhla West-Africa coffee consolidation', ll:[24.07,-15.76], real:0, y0:2029, y1:2030, ws:1,
+  cap:'Consolidation and transshipment of West African robusta', why:'Serves African and Middle East buyers. EU-bound processing stays north of the territory until its legal status settles (see Argument, risks).'},
+ {id:'c_uga', s:'coffee', origin:1, n:'Uganda coffee (Kampala)', ll:[0.33,32.58], real:1, y0:2025, y1:2025,
+  cap:'8.6 million 60-kg bags exported, June 2025 to May 2026', now:'Africa’s top coffee exporter in 2025/26 and already a supplier to Moroccan roasters. In this plan, an origin joint-venture roastery from 2030.'},
+ {id:'c_eth', s:'coffee', origin:1, n:'Ethiopia coffee (Addis Ababa)', ll:[9.01,38.75], real:1, y0:2025, y1:2025,
+  cap:'Record 11.6 million bags forecast for 2025/26, about 7.8 million exported', now:'Roughly half of output is drunk at home. In this plan, an origin joint-venture roastery from 2030.'},
+ {id:'c_tza', s:'coffee', origin:1, n:'Tanzania coffee (Kilimanjaro and southern highlands)', ll:[-3.35,37.34], real:1, y0:2025, y1:2025,
+  cap:'Arabica and robusta', now:'Among Morocco’s green-coffee suppliers (CBI).'},
+ {id:'c_rwa', s:'coffee', origin:1, n:'Rwanda and Burundi washed arabica', ll:[-2.2,29.9], real:1, y0:2025, y1:2025,
+  cap:'Specialty-grade washed coffees', now:'Ships via the Central Corridor to Dar es Salaam.'},
+ {id:'c_civ', s:'coffee', origin:1, n:'Côte d’Ivoire robusta', ll:[6.85,-5.30], real:1, y0:2025, y1:2025,
+  cap:'Robusta origin', now:'Supplies Morocco today. In this plan, an origin joint-venture roastery in Abidjan from 2031.'},
+ {id:'c_gin', s:'coffee', origin:1, n:'Guinea robusta', ll:[8.60,-9.50], real:1, y0:2025, y1:2025,
+  cap:'About 9 kt a year (2020)', now:'CBI reports most Guinean coffee goes to other African countries, mainly Morocco, Senegal and Algeria.'},
+ {id:'c_tgo', s:'coffee', origin:1, n:'Togo coffee', ll:[6.95,0.70], real:1, y0:2025, y1:2025,
+  cap:'Robusta and arabica', now:'Listed by CBI among Morocco’s main green-coffee suppliers.'},
+ {id:'c_cmr', s:'coffee', origin:1, n:'Cameroon coffee (western highlands)', ll:[5.50,10.40], real:1, y0:2025, y1:2025,
+  cap:'Arabica and robusta', now:'Exports through Douala.'},
+
+ /* ---------- bureaucratic backing (deliverable 3) ---------- */
+ {id:'p_casa', s:'paper', hub:1, n:'Casablanca trust stack: PortNet single window, Casablanca Finance City, CIMAC arbitration', ll:[33.59,-7.66], real:1, y0:2025, y1:2025,
+  cap:'Trade paperwork, finance and dispute resolution under one roof', now:'Operating institutions; the base this plan builds on.'},
+ {id:'p_accra', s:'paper', n:'AfCFTA Secretariat (Accra)', ll:[5.60,-0.19], real:1, y0:2025, y1:2025,
+  cap:'Continental free-trade rules', now:'48 tariff offers verified and about 25 states trading on AfCFTA preferences (March 2026). Rules of origin are still incomplete.'},
+ {id:'p_apa', s:'paper', n:'Africa Provenance and Compliance Authority', ll:[34.10,-6.76], real:0, y0:2027, y1:2029,
+  cap:'Conformity body for EUDR, CBAM and supply-chain due diligence, accredited with the EU',
+  why:'Makes Moroccan paperwork the cheapest way to prove an African product is legal, deforestation-free and low-carbon.'},
+ {id:'p_exch', s:'paper', n:'Casablanca commodity exchange and warehouse receipts (coffee first)', ll:[33.52,-7.68], real:0, y0:2030, y1:2032,
+  cap:'Graded lots, warehouse receipts, settlement through PAPSS where possible', why:'Gives origin cooperatives price discovery and collateral.'},
+ {id:'p_transit', s:'paper', n:'Bonded Sahel transit regime', ll:[21.50,-16.80], real:0, y0:2028, y1:2030, ws:1,
+  cap:'One guarantee and one seal from Bamako or Niamey to the Atlantic', why:'Removes the repeated border checks that make the land corridor uncompetitive. Anchored at the Guerguerat crossing.'},
+ {id:'p_aca', s:'paper', n:'Atlantic Corridor Authority (joint secretariat proposed in Nouakchott)', ll:[18.02,-15.88], real:0, y0:2029, y1:2031,
+  cap:'Treaty-based corridor company for the Sahel–Atlantic route', why:'Modelled on Lobito-style corridor governance and on the pipeline authority the AAGP already plans.'},
+ {id:'p_cum', s:'paper', n:'EU–Morocco–Africa diagonal cumulation protocol', ll:[50.85,4.35], real:0, y0:2029, y1:2033,
+  cap:'Origin rule change negotiated with the EU', why:'Lets African inputs processed in Morocco count toward preferential EU origin: the change that makes roasting, apparel and battery lines pay.'},
+ {id:'p_aagp', s:'paper', n:'AAGP project company and Pipeline Higher Authority', ll:[9.06,7.49], real:1, y0:2026, y1:2027,
+  cap:'Governance for a 13-country pipeline', now:'ECOWAS leaders approved the project in July 2026; a Nigeria–Morocco intergovernmental agreement and final investment decision are targeted for Q4 2026.'},
+
+ /* ---------- power (deliverable 4) ---------- */
+ {id:'e_noor', s:'power', n:'Noor Ouarzazate solar complex', ll:[31.02,-6.87], real:1, y0:2016, y1:2018,
+  cap:'About 580 MW of concentrated solar and PV', now:'Operating.'},
+ {id:'e_midelt', s:'power', n:'Noor Midelt solar complex (phased)', ll:[32.73,-4.86], real:1, y0:2025, y1:2029,
+  cap:'Solar plus storage, several phases', now:'Phase timing has shifted; check Masen for current status. Completion year here is a scenario.'},
+ {id:'e_tarfaya', s:'power', n:'Tarfaya wind farm', ll:[27.90,-12.70], real:1, y0:2014, y1:2014,
+  cap:'About 300 MW', now:'Operating.'},
+ {id:'e_southwind', s:'power', n:'Boujdour–Dakhla wind (Taqa Morocco, Nareva, FM6I)', ll:[25.30,-14.75], real:1, y0:2026, y1:2030, ws:1,
+  cap:'1.2 GW', now:'Part of the Dakhla–Casablanca HVDC partnership; feeds the 3 GW line north.'},
+ {id:'e_strait', s:'power', n:'Strait of Gibraltar interconnectors (Spain)', ll:[35.92,-5.52], real:1, y0:1997, y1:2006,
+  cap:'About 1.4 GW over two cables', now:'Africa’s only operating grid link to Europe. Morocco reversed flows to help Spain recover from the April 2025 blackout.'},
+ {id:'e_chbika', s:'power', n:'Chbika green-ammonia project (TE H2)', ll:[28.25,-11.30], real:1, y0:2027, y1:2031,
+  cap:'Wind and solar to green ammonia (location approximate)', now:'Land-reservation contract signed October 2024 under the Morocco Offer.'},
+ {id:'e_h2', s:'power', hub:1, n:'Morocco Offer green-hydrogen cluster (southern regions)', ll:[26.55,-13.90], real:1, y0:2026, y1:2032, ws:1,
+  cap:'Program targets: about 20 GW of renewables, 10 GW of electrolysis, about 8 Mt/yr of ammonia, fuels and steel; MAD 319bn',
+  now:'Investors signed land-reservation agreements in February 2026; not all plot locations are public. Marker placed at the cluster’s approximate centre.'},
+ {id:'e_lng', s:'power', n:'Nador West Med LNG terminal', ll:[35.17,-2.82], real:1, y0:2027, y1:2029,
+  cap:'Morocco’s first LNG entry point', now:'Tender suspended in early 2026 while the port itself opened on 31 October 2026.'},
+ {id:'e_desk', s:'power', n:'Power-trading desk and regional power exchange', ll:[33.49,-7.57], real:0, y0:2030, y1:2032,
+  cap:'Day-ahead trading with Iberia, later with the West African Power Pool', why:'Buys Iberian midday surplus, sells Moroccan evening wind; the resale engine behind deliverable 4.'},
+
+ /* ---------- space, science, forests (deliverable 5) ---------- */
+ {id:'f_crts', s:'frontier', n:'Royal Centre for Remote Sensing: Mohammed VI-A and VI-B satellites', ll:[33.97,-6.86], real:1, y0:2017, y1:2018,
+  cap:'Two Earth-observation satellites', now:'Launched 2017 and 2018; the centre acts as Morocco’s de facto space agency.'},
+ {id:'f_afsa', s:'frontier', n:'African Space Agency (Cairo)', ll:[30.03,31.22], real:1, y0:2025, y1:2025,
+  cap:'Continental coordination', now:'Inaugurated April 2025; aims to coordinate 120 satellites in orbit by 2030.'},
+ {id:'f_um6p', s:'frontier', hub:1, n:'Mohammed VI Polytechnic University (Benguerir)', ll:[32.22,-7.93], real:1, y0:2025, y1:2025,
+  cap:'Research campus and sovereign data centre', now:'Its data centre has offered cloud hosting to public and private users since January 2025.'},
+ {id:'f_igoudar', s:'frontier', n:'Igoudar Dakhla green data centre (500 MW target)', ll:[23.66,-15.99], real:1, y0:2026, y1:2031, ws:1,
+  cap:'500 MW target on a dedicated solar–wind plant', now:'Strategic studies launched April 2026. A Jazari Institute for AI and energy transition is planned alongside.'},
+ {id:'f_nouaceur', s:'frontier', n:'Nouaceur AI data centre', ll:[33.36,-7.58], real:1, y0:2026, y1:2027, y1o:1,
+  cap:'36 MW by end-2027; 500 MW long-term', now:'Under development.'},
+ {id:'f_msa', s:'frontier', n:'Moroccan Space Agency statute and Earth-observation smallsat constellation', ll:[34.12,-6.92], real:0, y0:2028, y1:2032,
+  cap:'Scenario: 8 to 12 smallsats for farm-plot and forest monitoring', why:'Sells deforestation-free evidence to the coffee and cocoa lines: space as a compliance service.'},
+ {id:'f_ground', s:'frontier', n:'Ouarzazate ground station and calibration site', ll:[30.92,-6.93], real:0, y0:2031, y1:2033,
+  cap:'Downlink and sensor calibration under clear desert skies', why:'Keeps traceability data on Moroccan soil.'},
+ {id:'f_gen', s:'frontier', n:'African coffee climate-resilience genomics lab', ll:[32.28,-7.84], real:0, y0:2029, y1:2031,
+  cap:'Joint with origin research institutes', why:'Breeds heat- and rust-tolerant varieties so the supply the nexus depends on survives warming.'},
+ {id:'f_cedar', s:'frontier', n:'Middle Atlas cedar restoration', ll:[33.30,-5.15], real:1, y0:2020, y1:2030, y1o:1, forest:[[2025,45],[2026,60],[2030,180],[2040,280],[2050,360]],
+  cap:'Illustrative share of the national 600,000 ha target', now:'Forêts du Maroc 2020–2030 aims to restore 600,000 ha by 2030; about 54,300 ha were launched in the 2025–26 campaign, with 100,000 ha a year targeted by 2029–30. The split between zones is illustrative.'},
+ {id:'f_rif', s:'frontier', n:'Rif forest restoration', ll:[35.00,-4.85], real:1, y0:2020, y1:2030, y1o:1, forest:[[2025,38],[2026,50],[2030,150],[2040,240],[2050,300]],
+  cap:'Illustrative share of the national 600,000 ha target', now:'Part of Forêts du Maroc 2020–2030; zone split illustrative.'},
+ {id:'f_maamora', s:'frontier', n:'Maamora cork-oak forest', ll:[34.15,-6.42], real:1, y0:2020, y1:2030, y1o:1, forest:[[2025,22],[2026,30],[2030,90],[2040,140],[2050,170]],
+  cap:'Illustrative share of the national 600,000 ha target', now:'Part of Forêts du Maroc 2020–2030; zone split illustrative.'},
+ {id:'f_argan', s:'frontier', n:'Argan biosphere reserve (Souss)', ll:[30.55,-9.10], real:1, y0:2020, y1:2030, y1o:1, forest:[[2025,45],[2026,60],[2030,180],[2040,290],[2050,370]],
+  cap:'Illustrative share of the national 600,000 ha target', now:'Part of Forêts du Maroc 2020–2030; zone split illustrative.'},
+ {id:'f_belt', s:'frontier', n:'Treated-water green belt, Agadir to Guelmim', ll:[29.40,-9.80], real:0, y0:2033, y1:2040, forest:[[2033,3],[2040,80],[2050,200]],
+  cap:'Scenario: 200,000 ha by 2050', why:'Uses reuse water and desalination surplus to hold back the desert edge south of the Souss.'},
+ {id:'f_ggw', s:'frontier', n:'Great Green Wall co-investment (Mauritania and Senegal segments)', ll:[16.30,-13.80], real:0, y0:2034, y1:2045, forest:[[2034,4],[2045,150],[2050,250]],
+  cap:'Scenario: 250,000 ha with Moroccan nurseries and finance', why:'Extends the restoration program along the same southern corridor as power and trade.'},
+ {id:'f_range', s:'frontier', n:'Atlantic space-science and suborbital range (feasibility only)', ll:[28.60,-10.95], real:0, y0:2042, y1:2048,
+  cap:'Sounding rockets and high-altitude science first', why:'A speculative seed. Launch would only follow if the satellite, data and research programs mature.'},
+
+ /* ---------- minerals and industry ---------- */
+ {id:'i_ocp', s:'industry', hub:1, n:'OCP Jorf Lasfar: phosphate, fertilizer and green-ammonia hub', ll:[33.12,-8.64], real:1, y0:2025, y1:2025,
+  cap:'World-scale phosphate fertilizer complex and port', now:'In 2020 OCP said it supplied more than 90% of Nigeria’s fertilizer demand; it ships across Africa.'},
+ {id:'i_gotion', s:'industry', n:'Gotion battery gigafactory (Kenitra Atlantic Free Zone)', ll:[34.22,-6.52], real:1, y0:2025, y1:2026, y1o:1,
+  cap:'20 GWh in phase 1, up to 100 GWh; LFP cells', now:'Production equipment start-up began the week of 20 October 2026. A Volkswagen–Gotion cathode-materials joint venture in Kenitra was announced in September 2026.'},
+ {id:'i_stell', s:'industry', n:'Stellantis Kenitra plant', ll:[34.31,-6.47], real:1, y0:2019, y1:2019, cap:'Vehicle assembly', now:'Operating.'},
+ {id:'i_renault', s:'industry', n:'Renault Tangier plant (Melloussa)', ll:[35.73,-5.64], real:1, y0:2012, y1:2012, cap:'Vehicle assembly', now:'Operating.'},
+ {id:'i_textile', s:'industry', n:'Tangier–Casablanca textile and apparel clusters', ll:[35.76,-5.82], real:1, y0:2025, y1:2025,
+  cap:'About 246,000 jobs; 93% of textile exports go to the EU', now:'Export volumes fell in 2025; upstream spinning and weaving is thin, which is why the cotton line matters.'},
+ {id:'i_cu', s:'industry', origin:1, n:'DRC–Zambia copperbelt (Kolwezi)', ll:[-10.71,25.47], real:1, y0:2025, y1:2025,
+  cap:'Copper and cobalt', now:'The Lobito railway already carries DRC copper to the Atlantic.'},
+ {id:'i_li', s:'industry', origin:1, n:'Goulamina lithium mine (Mali)', ll:[11.35,-7.35], real:1, y0:2025, y1:2025,
+  cap:'Spodumene concentrate', now:'Producing; ships overland to coastal ports today.'},
+ {id:'i_cotton', s:'industry', origin:1, n:'West African cotton belt (Mali, Burkina Faso, Benin)', ll:[12.0,-4.6], real:1, y0:2025, y1:2025,
+  cap:'Raw cotton lint', now:'Mostly exported raw to Asia today.'},
+ {id:'i_akwa', s:'industry', n:'OCP–NSIA ammonia and fertilizer plant (Akwa Ibom, Nigeria)', ll:[4.75,7.85], real:1, y0:2027, y1:2031,
+  cap:'Ammonia and DAP; ammonia to ship to Jorf Lasfar, phosphoric acid back', now:'Agreements signed in 2021–22; commissioning has repeatedly slipped. Completion year here is a scenario.'},
+
+ /* ---------- ports and corridors ---------- */
+ {id:'l_tmed', s:'logistics', hub:1, n:'Tanger Med port complex', ll:[35.885,-5.50], real:1, y0:2007, y1:2007,
+  cap:'11.1 million TEU in 2025, up 8.4%', now:'Largest container port in Africa and the Mediterranean.'},
+ {id:'l_nwm', s:'logistics', n:'Nador West Med port', ll:[35.11,-2.98], real:1, y0:2016, y1:2026, y1o:1,
+  cap:'About 3M TEU at opening, 5M+ by 2027, expandable to 12M; 800 ha industrial zone expandable to 5,000 ha', now:'First container terminal opened 31 October 2026; the second is due in April 2027.'},
+ {id:'l_dakhla', s:'logistics', n:'Dakhla Atlantique port', ll:[24.00,-15.86], real:1, y0:2021, y1:2028, y1o:1, ws:1,
+  cap:'MAD 12–15bn; 1,650 ha port and industrial zone', now:'Works over 74% complete at end-September 2026; delivery still set for end-2028.'},
+ {id:'l_casa', s:'logistics', n:'Port of Casablanca', ll:[33.61,-7.60], real:1, y0:2025, y1:2025, cap:'General cargo and containers', now:'Operating.'},
+ {id:'l_laayoune', s:'logistics', n:'Laâyoune phosphate port', ll:[27.07,-13.43], real:1, y0:2022, y1:2026, ws:1, cap:'Phosphate export berth', now:'Reported 95% complete in 2025.'},
+ {id:'l_guer', s:'logistics', n:'Guerguerat crossing to Mauritania', ll:[21.37,-16.96], real:1, y0:2025, y1:2025, ws:1, cap:'Main road crossing south', now:'The land corridor’s present choke point.'},
+ {id:'l_lobito', s:'logistics', n:'Port of Lobito (Angola)', ll:[-12.33,13.57], real:1, y0:2025, y1:2025, cap:'Atlantic outlet of the Lobito corridor', now:'Corridor financing of US$753m closed in July 2026.'},
+ {id:'l_mombasa', s:'logistics', n:'Port of Mombasa', ll:[-4.06,39.67], real:1, y0:2025, y1:2025, cap:'Northern Corridor gateway', now:'Operating.'},
+ {id:'l_djib', s:'logistics', n:'Port of Djibouti', ll:[11.60,43.14], real:1, y0:2025, y1:2025, cap:'Ethiopia’s main outlet', now:'Operating.'},
+ {id:'l_dar', s:'logistics', n:'Port of Dar es Salaam', ll:[-6.83,39.29], real:1, y0:2025, y1:2025, cap:'Central Corridor gateway', now:'Operating.'},
+ {id:'l_abj', s:'logistics', n:'Port of Abidjan', ll:[5.27,-4.00], real:1, y0:2025, y1:2025, cap:'West African hub port', now:'Operating.'},
+ {id:'l_dakar', s:'logistics', n:'Port of Dakar', ll:[14.68,-17.43], real:1, y0:2025, y1:2025, cap:'Gateway for the Dakar–Bamako corridor', now:'Operating.'},
+ {id:'l_algeciras', s:'logistics', n:'Port of Algeciras', ll:[36.13,-5.44], real:1, y0:2025, y1:2025, cap:'EU entry across the Strait', now:'Operating.'},
+ {id:'l_rdam', s:'logistics', n:'Port of Rotterdam', ll:[51.95,4.05], real:1, y0:2025, y1:2025, cap:'Northern Europe entry; ammonia import terminals', now:'Operating.'}
+];
+
+/* =========================================================
+   4. Lines of delivery. basis: real / mixed / concept.
+   vol: [year, value] for scale; unit labels it.
+   ========================================================= */
+const LINES = [
+ /* coffee */
+ {id:'L_cE', s:'coffee', n:'East African coffee via Suez to Tanger Med', mode:'sea', basis:'mixed', y0:2026, y1:2027,
+  vol:[[2027,3],[2030,20],[2035,55],[2040,85],[2050,140]], unit:'kt green coffee a year',
+  from:'Uganda, Ethiopia, Tanzania, Rwanda, Burundi', to:'Tanger Med coffee zone',
+  note:'Feeders are real: the Northern Corridor (Kampala to Mombasa), the Addis–Djibouti railway and the Central Corridor (Kigali to Dar es Salaam). Uganda and Tanzania already sell to Moroccan roasters; the scaled re-export flow is this plan’s scenario.',
+  paths:[J(S.kampalaMombasa, EAST_UP), J(S.addisDjib, S.djibBab, R(S.medSuez)), J(S.kigaliDar, S.darJoin, R(S.babMombasa).slice(1), R(S.medSuez))]},
+ {id:'L_cW', s:'coffee', n:'West and Central African robusta up the Atlantic', mode:'sea', basis:'mixed', y0:2027, y1:2028,
+  vol:[[2028,2],[2032,12],[2040,40],[2050,80]], unit:'kt green coffee a year',
+  from:'Cameroon, Togo, Côte d’Ivoire, Guinea', to:'Casablanca and Tanger Med',
+  note:'Guinea, Togo and Côte d’Ivoire already ship green coffee to Morocco. Consolidation can run through Dakhla for African and Middle East buyers.',
+  paths:[J(S.doualaLagos, WEST_UP, S.casaTmed), J([[9.51,-13.71],[9.2,-14.8]], S.abjDakar.slice(6), S.dakarDakhla)]},
+ {id:'L_cO', s:'coffee', n:'Roasted and soluble coffee out to buyers', mode:'sea', basis:'concept', y0:2028, y1:2029,
+  vol:[[2029,3],[2032,25],[2040,110],[2050,220]], unit:'kt roasted-equivalent a year',
+  from:'Tanger Med and Casablanca', to:'Spain, France, Benelux, Germany; West African markets under AfCFTA',
+  note:'Green beans enter the EU duty-free while processed coffee does not, so this line pays at scale only once origin rules allow it (deliverable 3).',
+  paths:[S.tmedAlgeciras, S.tmedMarseille, J(S.tmedRotterdam, S.rotterdamHamburg), J(R(S.dakhlaCasa), R(S.dakarDakhla), R(S.abjDakar))]},
+
+ /* water */
+ {id:'L_wh1', s:'water', n:'Water highway phase 1: Sebou to Bouregreg', mode:'canal', basis:'real', y0:2023, y1:2023,
+  from:'Sebou basin', to:'Sidi Mohammed Ben Abdellah dam (Rabat–Casablanca)', note:'66.7 km; about 484 Mm³ transferred since August 2023.', paths:[S.wh1]},
+ {id:'L_wh2', s:'water', n:'Water highway phase 2: to the Oum Er-Rbia basin', mode:'canal', basis:'real', y0:2026, y1:2030,
+  from:'Sebou and Bouregreg', to:'Settat, Berrechid, south Casablanca; Oum Er-Rbia farmland',
+  note:'Nearly 300 km and up to 800 Mm³ a year, built as a PPP with Taqa Morocco, Nareva and FM6I; construction from end-2026. Could reach 1.2 bn m³ a year toward Al Massira dam. Completion year is a scenario.', paths:[S.wh2]},
+ {id:'L_wh3', s:'water', n:'Water highway extension: Oued Laou to Sebou', mode:'canal', basis:'real', y0:2030, y1:2034,
+  from:'Oued Laou (Rif)', to:'Sebou basin', note:'Announced as a future extension; years are a scenario.', paths:[S.wh3]},
+ {id:'L_wx', s:'water', n:'Desalination as an export service', mode:'data', basis:'concept', y0:2031, y1:2033,
+  from:'Moroccan builders and operators', to:'Nouakchott, Dakar, Praia', note:'Equipment from the local-content program, plus operation and maintenance contracts.',
+  paths:[arc(PL.agadir,PL.nouakchott,.12), arc(PL.agadir,PL.dakar,.14), arc(PL.agadir,PL.praia,-.12)]},
+
+ /* paper */
+ {id:'L_pAf', s:'paper', n:'AfCFTA paper corridor: origin, standards, payments', mode:'data', basis:'concept', y0:2027, y1:2029,
+  from:'Casablanca trust stack', to:'AfCFTA Secretariat, AAGP authority, East African origins',
+  note:'Mutual recognition of certificates, electronic bills of lading, and payments settled through PAPSS.',
+  paths:[arc(PL.casa,PL.accra,.18), arc(PL.casa,PL.abuja,.16), arc(PL.casa,PL.nairobi,.22), arc(PL.casa,PL.addis,.2)]},
+ {id:'L_pEU', s:'paper', n:'EU compliance link: provenance data and cumulation', mode:'data', basis:'concept', y0:2027, y1:2029,
+  from:'Provenance authority (Rabat)', to:'European Commission and EU customs', note:'Due-diligence statements filed once, in Morocco, for goods entering the EU.',
+  paths:[arc(PL.rabat,PL.brussels,-.15)]},
+ {id:'L_pSa', s:'paper', n:'Sahel bonded-transit network', mode:'data', basis:'concept', y0:2028, y1:2030,
+  from:'Transit guarantee (Guerguerat)', to:'Nouakchott, Bamako, Ouagadougou, Niamey, N’Djamena',
+  note:'A single guarantee and electronic seal for cargo moving to and from the Atlantic.',
+  paths:[arc(PL.guerguerat,PL.bamako,.12), arc(PL.guerguerat,PL.ouaga,.12), arc(PL.guerguerat,PL.niamey,.12), arc(PL.guerguerat,PL.ndjamena,.12), arc(PL.guerguerat,PL.nouakchott,.2)]},
+
+ /* power and gas */
+ {id:'L_hvdc', s:'power', n:'Dakhla–Casablanca 3 GW HVDC line', mode:'hvdc', basis:'real', y0:2026, y1:2030, ws:1,
+  from:'Oued Lekraa, between Boujdour and Dakhla', to:'Médiouna, Casablanca',
+  note:'About 1,400 km, built as a PPP between ONEE and Taqa Morocco, Nareva and FM6I; commissioning expected around 2030. Also meant to power the Casablanca desalination plant.', paths:[S.hvdc]},
+ {id:'L_b400', s:'power', n:'Boujdour–Marrakech 400 kV lines', mode:'grid', basis:'real', y0:2026, y1:2029, ws:1,
+  from:'Boujdour', to:'Tensift (Marrakech)', note:'ONEE launched prequalification in November 2025 for about 1,000 km of very-high-voltage lines. Completion year is a scenario.', paths:[S.b400]},
+ {id:'L_es', s:'power', n:'Spain interconnectors (existing)', mode:'cable', basis:'real', y0:2006, y1:2006,
+  from:'Fardioua', to:'Tarifa', note:'About 1.4 GW over two cables; Morocco can both import and export.', paths:[S.spain]},
+ {id:'L_es3', s:'power', n:'Third Spain–Morocco link (700 MW)', mode:'cable', basis:'real', y0:2027, y1:2030,
+  from:'Northern Morocco', to:'Andalusia', note:'First planned for 2026 and now under study again within the EU’s T-MED initiative. Completion year is a scenario.', paths:[S.spain3]},
+ {id:'L_pt', s:'power', n:'Portugal–Morocco interconnection', mode:'cable', basis:'real', y0:2029, y1:2033,
+  from:'Northern Morocco', to:'Southern Portugal', note:'Relaunched in July 2026; Lisbon says it proceeds only with EU or private financing. Years are a scenario.', paths:[S.portugal]},
+ {id:'L_fr', s:'power', n:'Pont de la Méditerranée: Nador to Marseille', mode:'cable', basis:'real', y0:2030, y1:2035,
+  from:'Nador', to:'Marseille', note:'France launched a call for expressions of interest in July 2026. Years are a scenario.', paths:[S.france]},
+ {id:'L_de', s:'power', n:'Sila Atlantik: Morocco to Germany', mode:'cable', basis:'real', y0:2030, y1:2037,
+  from:'Guelmim-Oued Noun', to:'Northern Germany', note:'Up to 15 GW of solar and wind behind about 4,800 km of HVDC cable. Talks stalled in 2026 over governance and land; Morocco wants two-way flow and wrote to Berlin in support in October 2026. Years are a scenario.', paths:[S.sila]},
+ {id:'L_uk', s:'power', n:'Xlinks Morocco–UK power project (shelved)', mode:'cable', basis:'real', y0:2025, y1:2025, shelved:1,
+  from:'Guelmim-Oued Noun', to:'North Devon', note:'The UK government declined a contract for difference in June 2025. Kept here as the lesson behind the “domestic first” rule.', paths:[S.xlinks]},
+ {id:'L_mr', s:'power', n:'Dakhla–Boulenouar 400 kV line to Mauritania', mode:'grid', basis:'real', y0:2027, y1:2030, ws:1,
+  from:'Dakhla', to:'Boulenouar (Mauritania)', note:'About 370 km; topographic study launched in 2026 as the first step toward the West African Power Pool. Years are a scenario.', paths:[S.dakhlaMaur]},
+ {id:'L_mrsn', s:'power', n:'Mauritania backbone: Nouakchott to Kiffa and to Senegal', mode:'grid', basis:'real', y0:2026, y1:2030,
+  from:'Nouakchott', to:'Kiffa; Tobène (Senegal)', note:'Nouakchott–Kiffa is an EU Global Gateway project on the Desert to Power backbone; a Nouakchott–Tobène 225 kV link is proposed. The Boulenouar–Nouakchott tie is this plan’s addition.',
+  paths:[S.maurNkc, S.nkcKiffa, S.nkcSen]},
+ {id:'L_sp', s:'power', n:'Sahel solar spine to Bamako and Niamey', mode:'grid', basis:'concept', y0:2036, y1:2042,
+  from:'Kiffa', to:'Bamako and Niamey', note:'Continental resale: Moroccan and Mauritanian power sold into the Sahel once the corridor is secure.', paths:[S.spine, S.spineB]},
+ {id:'L_g1', s:'power', n:'Atlantic gas pipeline, first sections: Mauritania and Senegal to Morocco', mode:'pipeline', basis:'real', y0:2027, y1:2031, ws:1,
+  from:'Greater Tortue (Mauritania–Senegal)', to:'Morocco and the Maghreb–Europe pipeline',
+  note:'ECOWAS approved the project in July 2026; a bilateral agreement and final investment decision are targeted for Q4 2026. Early sections connect Morocco to Mauritanian and Senegalese gas. Years are a scenario.', paths:[S.aagp1]},
+ {id:'L_g2', s:'power', n:'Atlantic gas pipeline: Ghana–Côte d’Ivoire link', mode:'pipeline', basis:'real', y0:2028, y1:2032,
+  from:'Ghana', to:'Côte d’Ivoire', note:'Named as an early segment by ONHYM. Years are a scenario.', paths:[S.aagp2]},
+ {id:'L_g3', s:'power', n:'Atlantic gas pipeline: Côte d’Ivoire to Senegal', mode:'pipeline', basis:'real', y0:2030, y1:2035,
+  from:'Côte d’Ivoire', to:'Senegal', note:'Completes the coastal spine across 13 countries. Years are a scenario.', paths:[S.aagp3]},
+ {id:'L_g4', s:'power', n:'Atlantic gas pipeline: Nigeria to Ghana (final segment)', mode:'pipeline', basis:'real', y0:2031, y1:2036,
+  from:'Nigeria', to:'Ghana', note:'Design capacity 30 bcm a year, about US$25bn for the whole route. Years are a scenario.', paths:[S.aagp4]},
+ {id:'L_gme', s:'power', n:'Maghreb–Europe gas pipeline', mode:'pipeline', basis:'real', y0:1996, y1:1996,
+  from:'Aïn Beni Mathar', to:'Tarifa and Córdoba', note:'Runs in reverse since 2022, bringing LNG-sourced gas from Spain; the planned tie-in for Atlantic gas.', paths:[S.gme]},
+ {id:'L_nh3', s:'power', n:'Green ammonia to northern Europe', mode:'sea', basis:'concept', y0:2031, y1:2032,
+  vol:[[2032,.3],[2038,2],[2045,4],[2050,6]], unit:'Mt a year', from:'Southern hydrogen cluster', to:'Rotterdam',
+  note:'A scenario share of the Morocco Offer’s target of about 8 Mt a year of derivatives.', paths:[S.nh3]},
+
+ /* frontier */
+ {id:'L_eo', s:'frontier', n:'Satellite traceability service to coffee and cocoa origins', mode:'data', basis:'concept', y0:2032, y1:2033,
+  from:'Benguerir and Rabat', to:'Kampala, Addis Ababa, Kigali, Abidjan, Douala',
+  note:'Farm-plot imagery and deforestation checks delivered as evidence for EU due-diligence filings.',
+  paths:[arc(PL.benguerir,PL.kampala,.2), arc(PL.benguerir,PL.addis,.2), arc(PL.benguerir,PL.kigali,.2), arc(PL.benguerir,PL.abidjan,.14), arc(PL.benguerir,PL.douala,.16)]},
+
+ /* industry */
+ {id:'L_bat', s:'industry', n:'Copper and cobalt via Lobito to the Kenitra battery cluster', mode:'sea', basis:'mixed', y0:2028, y1:2029,
+  vol:[[2029,10],[2035,80],[2045,200],[2050,240]], unit:'kt a year', from:'Kolwezi (DRC)', to:'Kenitra',
+  note:'The Benguela railway is real and carried about 265,000 t in 2025; the onward flow to Morocco is this plan’s scenario.',
+  paths:[S.kolweziLobito, J(S.lobitoWest, S.abjDakar.slice(3), S.dakarDakhla, S.dakhlaCasa, S.casaKenitra)]},
+ {id:'L_zam', s:'industry', n:'Zambia link to the Lobito railway', mode:'rail', basis:'real', y0:2027, y1:2031,
+  from:'Chingola (Zambia)', to:'Luacano (Angola)', note:'Financial close targeted for end-2027. Completion year is a scenario.', paths:[S.zambiaLink]},
+ {id:'L_batO', s:'industry', n:'Battery cells and cathode to European carmakers', mode:'rail', basis:'mixed', y0:2026, y1:2027,
+  vol:[[2027,5],[2030,20],[2040,60],[2050,80]], unit:'GWh a year', from:'Kenitra', to:'Tanger Med, then Spain and beyond',
+  note:'Gotion has said most output will be exported; volumes are a scenario.', paths:[J([[34.24,-6.52],[35.0,-6.05],[35.6,-5.75],[35.885,-5.50]], S.tmedAlgeciras)]},
+ {id:'L_li', s:'industry', n:'Malian lithium to Kenitra', mode:'sea', basis:'mixed', y0:2029, y1:2030,
+  vol:[[2030,20],[2036,60],[2050,90]], unit:'kt concentrate a year', from:'Goulamina', to:'Kenitra cathode plants',
+  note:'Road to Dakar today; switches to the Sahel–Atlantic corridor once it is secure.', paths:[S.goulaminaDakar, J(S.dakarDakhla, S.dakhlaCasa, S.casaKenitra)]},
+ {id:'L_cot', s:'industry', n:'West African cotton to Moroccan spinning and apparel', mode:'sea', basis:'concept', y0:2029, y1:2031,
+  vol:[[2031,10],[2040,60],[2050,90]], unit:'kt lint a year', from:'Mali, Burkina Faso, Benin', to:'Tangier and Casablanca mills, then Spain',
+  note:'Gives the apparel industry the upstream it lacks and makes origin cumulation worth negotiating.',
+  paths:[S.cottonAbj, S.parakouCotonou, J(S.abjDakar, S.dakarDakhla, S.dakhlaCasa, S.casaTmed)]},
+ {id:'L_fert', s:'industry', n:'Fertilizer backhaul to coffee origins', mode:'sea', basis:'mixed', y0:2025, y1:2025,
+  from:'Jorf Lasfar', to:'Mombasa, Djibouti, Abidjan, Lagos',
+  note:'OCP fertilizer already flows to these ports; pairing it with inbound coffee so boxes travel full both ways is this plan’s addition.',
+  paths:[J(JORF_TMED, S.medSuez, S.babMombasa), J(JORF_TMED, S.medSuez, R(S.djibBab)), J(casaToJorf.slice(-1), [[33.0,-9.0]], R(S.dakhlaCasa).slice(1), R(S.dakarDakhla), R(S.abjDakar), R(S.lagosAbj))]},
+ {id:'L_amm', s:'industry', n:'Nigerian ammonia to Jorf Lasfar, phosphoric acid back', mode:'sea', basis:'real', y0:2028, y1:2031,
+  from:'Akwa Ibom', to:'Jorf Lasfar', note:'The stated design of the OCP–NSIA plant. Years are a scenario because commissioning has slipped.',
+  paths:[J(S.akwaJorf, WEST_UP.slice(1, -1), [[33.0,-9.0],[33.12,-8.70]])]},
+
+ /* logistics */
+ {id:'L_tdx', s:'logistics', n:'Tiznit–Dakhla expressway', mode:'road', basis:'real', y0:2016, y1:2025, ws:1,
+  from:'Tiznit', to:'Dakhla', note:'About 1,055 km; the last section opened in January 2025.', paths:[S.tdx]},
+ {id:'L_hsr', s:'logistics', n:'Al Boraq high-speed rail, Tangier to Kenitra', mode:'rail', basis:'real', y0:2018, y1:2018,
+  from:'Tangier', to:'Kenitra', note:'Africa’s first high-speed line; 5.6 million passengers in 2025.', paths:[S.hsr]},
+ {id:'L_lgv', s:'logistics', n:'Kenitra–Marrakech high-speed line', mode:'rail', basis:'real', y0:2025, y1:2029, y1o:1,
+  from:'Kenitra', to:'Marrakech via Rabat and Casablanca', note:'430 km; past 30% complete in May 2026 and due in 2029, ahead of the 2030 World Cup.', paths:[S.lgv]},
+ {id:'L_sah', s:'logistics', n:'Sahel–Atlantic road corridor', mode:'road', basis:'mixed', y0:2028, y1:2034,
+  from:'Bamako, Ouagadougou, Niamey, N’Djamena', to:'Dakhla Atlantique',
+  note:'The royal Atlantic Initiative (November 2023) is backed by Mali, Niger, Burkina Faso and Chad, but the land corridor is largely unbuilt and insecure. Existing segments such as Mauritania’s Route de l’Espoir are used where possible. Years are a scenario.',
+  paths:[R(J(S.dakhlaNkc, S.espoir, S.nemaBamako)), R(S.bamakoOuaga), R(S.bamakoNdj)]},
+ {id:'L_des', s:'logistics', n:'Direct desert link: Smara, Zouérat, Atar, Kiffa', mode:'road', basis:'concept', y0:2031, y1:2036, ws:1,
+  from:'Smara', to:'Kiffa', note:'A shorter inland route that avoids the coast; depends on security and Mauritanian agreement.', paths:[R(S.desertLink)]},
+ {id:'L_rail', s:'logistics', n:'Sahel–Atlantic railway', mode:'rail', basis:'concept', y0:2040, y1:2047, ws:1,
+  from:'Bamako', to:'Dakhla Atlantique', note:'Only once road volumes justify it. The most speculative transport line on the map.', paths:[R(J(S.dakhlaNkc, S.espoir, S.nemaBamako))]}
+];
+
+/* =========================================================
+   5. Milestones, metrics, phases
+   ========================================================= */
+const MILESTONES = [
+ {y:2025, t:'Tiznit–Dakhla expressway completed; UK drops Xlinks (June); UN Security Council Resolution 2797 (October)', real:1},
+ {y:2026, t:'ECOWAS approves the Atlantic gas pipeline (July); Gotion gigafactory starts up (October); Nador West Med opens (31 October); EUDR applies to large and medium operators from 30 December', real:1},
+ {y:2027, t:'Casablanca desalination plant due (February); Nador West Med second terminal (April)', real:1},
+ {y:2028, t:'Dakhla Atlantique port delivery (end-2028)', real:1},
+ {y:2029, t:'Kenitra–Marrakech high-speed line due', real:1},
+ {y:2030, t:'World Cup co-hosted with Spain and Portugal; 1.7 bn m³ desalination target; 600,000 ha reforestation target', real:1},
+ {y:2031, t:'1.8 bn m³ desalination target', real:1},
+ {y:2033, t:'Scenario: diagonal cumulation in force; satellite traceability service live', real:0},
+ {y:2037, t:'Scenario: Morocco–Germany cable energised', real:0},
+ {y:2042, t:'Scenario: Sahel solar spine reaches Bamako and Niamey', real:0},
+ {y:2047, t:'Scenario: Sahel–Atlantic railway', real:0},
+ {y:2050, t:'Scenario horizon', real:0}
+];
+/* k: r = reported, t = official target, s = this plan's scenario */
+const METRICS = [
+ {id:'desal', s:'water', lab:'Desalinated water capacity', unit:'bn m³/yr', fmt:v=>v.toFixed(2),
+  pts:[[2025,.35,'r'],[2026,.35,'e'],[2027,.89,'t'],[2030,1.7,'t'],[2031,1.8,'t'],[2035,2.3,'s'],[2040,2.8,'s'],[2050,3.5,'s']]},
+ {id:'coffee', s:'coffee', lab:'Coffee processed for export', unit:'kt/yr', fmt:v=>Math.round(v).toString(),
+  pts:[[2025,0,'e'],[2026,0,'e'],[2027,5,'s'],[2030,30,'s'],[2035,90,'s'],[2040,150,'s'],[2050,250,'s']]},
+ {id:'re', s:'power', lab:'Renewable capacity', unit:'GW', fmt:v=>v.toFixed(1),
+  pts:[[2025,5.5,'r'],[2030,15,'t'],[2035,28,'s'],[2040,42,'s'],[2050,70,'s']]},
+ {id:'xb', s:'power', lab:'Cross-border transmission', unit:'GW', fmt:v=>v.toFixed(1),
+  pts:[[2025,1.4,'r'],[2029,1.4,'s'],[2030,2.1,'s'],[2031,2.6,'s'],[2033,3.6,'s'],[2035,5.6,'s'],[2037,9.2,'s'],[2045,12,'s'],[2050,15,'s']]},
+ {id:'forest', s:'frontier', lab:'Forest restored, cumulative', unit:'k ha', fmt:v=>Math.round(v).toString(),
+  pts:[[2025,150,'r'],[2026,200,'r'],[2030,600,'t'],[2035,900,'s'],[2040,1200,'s'],[2050,1800,'s']]}
+];
+const PHASES = [
+ {s:'water', lab:'1 Water', a:2025, b:2032},
+ {s:'coffee', lab:'2 Coffee', a:2026, b:2035},
+ {s:'paper', lab:'3 Bureaucratic backing', a:2027, b:2035},
+ {s:'power', lab:'4 Power and resale', a:2028, b:2045},
+ {s:'frontier', lab:'5 Space, science, forests', a:2030, b:2050}
+];
+
+/* =========================================================
+   6. Panel content
+   ========================================================= */
+const ARG = `
+<h2>The bet</h2>
+<p>Africa still ships most of what it grows and mines as raw material. Its largest customer, Europe, is turning proof of origin, carbon and deforestation into a condition of entry. Morocco sits between the two with a set of assets no other African state holds together: the continent’s biggest port, its only grid link to Europe, deep-water berths on both the Mediterranean and the Atlantic, phosphate, and a record of delivering megaprojects close to schedule.</p>
+<p>This plan treats Morocco not as a source of commodities but as the place where African inputs are transformed, certified, financed and powered on their way to market, and where European capital and standards are translated back into African supply chains.</p>
+<div class="facts">
+  <div class="fact"><b>11.1M TEU</b><span>Tanger Med container traffic in 2025, the largest in Africa and the Mediterranean</span></div>
+  <div class="fact"><b>1.4 GW</b><span>Morocco–Spain interconnection, Africa’s only operating grid link to Europe</span></div>
+  <div class="fact"><b>86.5%</b><span>Share of world coffee exports shipped as green beans, Oct 2025 to May 2026 (ICO)</span></div>
+  <div class="fact"><b>~600 m³</b><span>Fresh water per Moroccan per year, below the 1,000 m³ scarcity line</span></div>
+</div>
+
+<h2>What the nexus sells</h2>
+<ul>
+  <li><b>Processing.</b> Transformation a ferry ride from the EU, in industrial zones already built for it: Tanger Med, Kenitra, Jorf Lasfar, and Nador West Med since October 2026.</li>
+  <li><b>Paperwork.</b> A trust stack of traceability, conformity, origin, arbitration and settlement. The EU deforestation rules apply to large and medium operators from 30 December 2026 and make geolocated provenance a ticket of entry for coffee and cocoa.</li>
+  <li><b>Power.</b> Cheap renewable electricity and the desalinated water it makes possible, sold inward to processors, north to Iberia and beyond, and south to the West African Power Pool.</li>
+</ul>
+
+<h2>Lines of delivery</h2>
+<p><b>Inbound commodities.</b> East African coffee through Suez; West African coffee and cotton up the Atlantic; DRC copper and cobalt via the Lobito railway; Malian lithium via Dakar and later the Sahel corridor; Nigerian ammonia to Jorf Lasfar.</p>
+<p><b>Energy.</b> The Atlantic gas pipeline, Mauritania and Senegal first and Nigeria last; the Dakhla–Casablanca HVDC line; links to Spain, Portugal, France and Germany; a 400 kV line south toward the West African Power Pool.</p>
+<p><b>Outbound.</b> Roasted and soluble coffee, battery materials, apparel and green ammonia to Europe; fertilizer, power, desalination kits and services back into Africa.</p>
+<p><b>Services.</b> Provenance data, satellite traceability, trade finance and arbitration. They never appear on a manifest, but they are why the cargo routes through Morocco.</p>
+<p><button class="go" data-tab="lin">Trace each line on the map</button></p>
+
+<h2>Why this order</h2>
+<ul>
+  <li><b>Water first.</b> Every other line draws on it: electrolysers, decaf and soluble coffee, data-centre cooling, tree nurseries. At typical seawater reverse-osmosis energy use of 3 to 4 kWh/m³, the 1.7 bn m³ national target is also a 5 to 7 TWh-a-year electricity customer: the home demand that later justifies export-scale power.</li>
+  <li><b>Coffee second.</b> A low-capital, high-margin test of the whole model. It can start inside existing free-zone rules, and it exposes the real frictions fast.</li>
+  <li><b>Bureaucratic backing third.</b> Fix exactly what the coffee pilot exposes (origin rules, conformity, payments, transit), then apply the same fixes to every other line.</li>
+  <li><b>Power and resale fourth.</b> Export-only links fail when they ignore home demand; the UK dropped Xlinks in June 2025. Rabat now asks for two-way flow and domestic benefit, and by the 2030s water and processing give it both.</li>
+  <li><b>Space, science and forests last.</b> Cheap to start and slow to mature. Satellites, labs and forests compound on the water, power and paperwork already built.</li>
+</ul>
+
+<h2>What could break it</h2>
+<ul>
+  <li><b>Western Sahara’s legal status.</b> In October 2024 the EU Court of Justice annulled EU–Morocco trade agreements as applied to the territory. An amended agreement with regional origin labels has applied provisionally since October 2025; critics call it legally fragile. Design rule here: EU-bound processing sits north of the territory, and Dakhla serves Africa-facing transit and consolidation until the question settles.</li>
+  <li><b>Sahel security.</b> Mali, Niger and Burkina Faso back the Atlantic Initiative, but the land corridor is largely unbuilt and runs through active insurgencies.</li>
+  <li><b>Finance.</b> The gas pipeline alone is about US$25bn. Even with a Q4 2026 investment decision, the first sections would carry Mauritanian and Senegalese gas, not Nigerian.</li>
+  <li><b>Rival corridors.</b> Algeria’s Trans-Saharan Gas Pipeline; TAZARA against Lobito; Spanish ports against Tanger Med and Nador.</li>
+  <li><b>Origin politics.</b> Coffee producers want to roast at home. The model works only as joint ventures with revenue share and origin branding.</li>
+  <li><b>The water–energy loop.</b> Desalination’s power bill and brine are real costs, and a wet year like 2026 can sap urgency before the next drought.</li>
+</ul>
+
+<h2>Reading the map</h2>
+<p class="muted">Circles are real projects. Diamonds are proposals in this plan. Eight-point stars are processing and trust hubs. A ring means under construction; an outline means not yet started. Up to the dashed “Today” line on the timeline, status reflects reporting as of November 2026; after it, completion years are official targets where marked and this plan’s scenario otherwise.</p>
+`;
+
+const SEQ = [
+ {s:'water', t:'Advanced water infrastructure', yrs:'Lead priority 2025–2032, then continuous',
+  role:'Build the water balance before selling anything that needs water.',
+  real:[['w_casa','Casablanca–Settat desalination, 200 then 300 Mm³/yr, due February 2027'],['w_rabat','Rabat, Tangier and Nador plants, adding about 540–567 Mm³/yr with Casablanca before 2027'],['w_tiznit','Tiznit mega-plant, 350 Mm³/yr, tender around mid-2026'],['L_wh2','Water highway phase 2, up to 800 Mm³/yr, construction from end-2026'],['w_dakhla','Dakhla irrigation desalination with its own wind farm']],
+  adds:[['w_twin','A national water-grid control centre'],['w_kit','Desalination equipment works riding the 70% local-content target'],['w_brine','Brine-to-minerals park'],['w_reuse','Water-reuse loop for the free zones'],['w_nkc','Desalination exported as a service to Nouakchott and Praia']],
+  kpi:'Desalination 0.35 bn m³ (2025) to 1.7 bn (2030 target) and 1.8 bn (2031 target); all new plants renewable-powered (official policy).',
+  risk:'Brine and energy cost; complacency after the wet 2026 season.'},
+ {s:'coffee', t:'Coffee', yrs:'Pilot 2027, scale 2030–2035',
+  role:'Prove the processing-nexus model on a high-margin, low-capital commodity.',
+  real:[['c_uga','Uganda exported 8.6M bags in the year to May 2026, Africa’s largest'],['c_eth','Ethiopia’s record 11.6M-bag crop forecast for 2025/26'],['c_gin','Guinea, Togo, Côte d’Ivoire, Tanzania and Uganda already supply Morocco, which imported about 47,000 t of coffee in 2024'],['l_tmed','Tanger Med and its free zones as the processing site']],
+  adds:[['c_tmz','Tanger Med coffee processing and compliance zone'],['c_casa','Casablanca grading lab and shared roasting'],['c_decaf','Water-process decaf and soluble plant using desalinated water'],['c_dkh','Dakhla consolidation for African and Middle East buyers'],['L_fert','Fertilizer backhaul so containers run full both ways']],
+  kpi:'Scenario: 5 kt (2027) to 90 kt (2035) of coffee processed for re-export; share of EU-bound lots with a filed due-diligence statement.',
+  risk:'Origin countries’ own roasting ambitions; EU origin rules for processed coffee; price swings.'},
+ {s:'paper', t:'Bureaucratic backing', yrs:'Lead priority 2027–2035',
+  role:'Turn paperwork into the product: provenance, conformity, origin, transit, settlement.',
+  real:[['p_casa','PortNet single window, Casablanca Finance City and CIMAC arbitration'],['p_accra','AfCFTA: 48 tariff offers verified, about 25 states trading on preferences (March 2026)'],['p_aagp','The pipeline’s planned project company and higher authority']],
+  adds:[['p_apa','Africa Provenance and Compliance Authority for EUDR and CBAM'],['p_cum','EU–Morocco–Africa diagonal cumulation of origin'],['p_transit','Bonded Sahel transit regime'],['p_aca','Atlantic Corridor Authority'],['p_exch','Commodity exchange and warehouse receipts']],
+  kpi:'Border dwell time; share of EU-bound shipments with automated filings; number of countries under cumulation.',
+  risk:'EU legal exposure over Western Sahara; politics of the Sahel states; slow AfCFTA rules of origin.'},
+ {s:'power', t:'Power generation with EU and continental resale', yrs:'Lead priority 2028–2045',
+  role:'Sell electrons both ways, with a domestic share in every export gigawatt.',
+  real:[['L_hvdc','Dakhla–Casablanca 3 GW HVDC, around 2030'],['L_es','Spain links of 1.4 GW, plus a third 700 MW link under study'],['L_fr','Portugal relaunch and a French Nador–Marseille link under study'],['L_de','Sila Atlantik to Germany, stalled on governance in 2026'],['L_mr','Dakhla–Boulenouar 400 kV toward the West African Power Pool'],['L_g1','Atlantic gas pipeline approved by ECOWAS in July 2026'],['e_h2','Morocco Offer: about 20 GW renewables and 10 GW electrolysis targeted']],
+  adds:[['e_desk','A power-trading desk and regional exchange'],['L_sp','A Sahel solar spine to Bamako and Niamey'],['L_nh3','Green ammonia shipped to Rotterdam']],
+  kpi:'Renewables about 46% of installed capacity in 2025 by the government’s count (IRENA counts about 40%); 52% targeted by 2030, which ONEE expects to beat by 2028. Scenario: cross-border capacity from 1.4 GW to about 15 GW by 2050.',
+  risk:'European political appetite; cable supply; the pipeline’s financing; Algeria’s competing route.'},
+ {s:'frontier', t:'Space, science and reforestation seeds', yrs:'Seeded 2030, maturing to 2050',
+  role:'Plant the long-horizon programs that keep the nexus renewing itself.',
+  real:[['f_crts','Mohammed VI-A and VI-B Earth-observation satellites'],['f_afsa','African Space Agency, inaugurated April 2025'],['f_um6p','UM6P research campus and sovereign data centre'],['f_igoudar','Igoudar Dakhla 500 MW green data centre in study'],['f_cedar','Forêts du Maroc: 600,000 ha by 2030, scaling to 100,000 ha a year']],
+  adds:[['f_msa','A space agency statute and traceability smallsats'],['f_gen','Coffee climate-resilience genomics lab'],['f_belt','Treated-water green belt south of Agadir'],['f_ggw','Great Green Wall co-investment in Mauritania and Senegal'],['f_range','Space-science range, feasibility only']],
+  kpi:'Hectares restored and surviving; farm plots under satellite monitoring; joint research programs with origin countries.',
+  risk:'Seedling survival under drought; programs that never move past announcement.'}
+];
+
+const SOURCES = [
+ ['Nigeria and Morocco target Q4 2026 pipeline agreement (Arab News, May 2026)','https://www.arabnews.com/node/2643361'],
+ ['ECOWAS approves Nigeria–Morocco gas pipeline (EWN/AFP, July 2026)','https://www.ewn.co.za/2026/07/20/west-african-leaders-approve-nigeria-morocco-gas-pipeline'],
+ ['AAGP financing pitch and Q4 FID target (bne IntelliNews, Sept 2026)','https://www.intellinews.com/morocco-puts-african-atlantic-gas-pipeline-into-un-financing-pitch-as-q4-fid-target-looms-471590/?source=morocco'],
+ ['Dakhla Atlantique works pass 74% (Boursenews, Oct 2026)','https://boursenews.ma/article/marches/port-dakhla-atlantique-avancement-travaux-74-pourcent-septembre-2026-sgtm'],
+ ['Nador West Med and Dakhla opening dates (Morocco World News, Dec 2025)','https://www.moroccoworldnews.com/2025/12/271218/morocco-to-open-major-deepwater-ports-nador-west-med-in-2026-dakhla-atlantique-in-2028/'],
+ ['Nador container terminal opens 31 Oct 2026 (Rio Times)','https://www.riotimesonline.com/morocco-nador-container-terminal-opens-first-ship-2026/'],
+ ['Tanger Med 2025 port activity (Tanger Med press release)','https://www.tangermed.ma/wp-content/uploads/press-releases/2026/CP-TMPA-PORT-ACTIVITY-REPORT-IN-2025.pdf'],
+ ['Casablanca desalination plant due Feb 2027 (Le360, July 2026)','https://en.le360.ma/society/morocco-says-casablanca-desalination-plant-to-begin-operating-in-february-2027_VOR5BMALOVGVFKGCUQNMWTTIPA/'],
+ ['ONEE MAD 248bn plan for 2026–2030 (Le360, July 2026)','https://en.le360.ma/economy/moroccos-onee-to-invest-mad-248-billion-in-energy-transition-and-water-security-by-2030_JD32NT6HEBHDJNQNU2BXRUQ5K4/'],
+ ['60% of drinking water from desalination by 2030 (Morocco World News, Dec 2025)','https://www.moroccoworldnews.com/2025/12/270638/morocco-aims-to-source-60-of-drinking-water-from-desalination-by-2030/'],
+ ['National desalination industry and 70% local content (North Africa Post)','https://northafricapost.com/?p=97046'],
+ ['Desalination target of 1.8 bn m³ by 2031 (Le Matin)','https://lematin.ma/nation/dessalement-de-leau-de-mer-objectif-18-milliard-de-m-a-lhorizon-2031/371178/amp'],
+ ['Water highway extension of about 300 km (Le360)','https://en.le360.ma/economy/water-highway-to-grow-by-300-km-transferring-up-to-800-million-cubic-meters-a-year_6GTZDRNFMNE7ZH62MKLZHRUKEY/'],
+ ['Morocco’s coffee market and roasting industry (CBI)','https://www.cbi.eu/market-information/coffee/morocco'],
+ ['Moroccan coffee imports in 2024 (SNRT News)','https://snrtnews.com/fr/article/marche-du-cafe-au-maroc-augmentation-des-prix-et-consommation-moderee-97323'],
+ ['Uganda tops African coffee exports with 8.6M bags (June 2026)','https://ugandanz.com/uganda-overtakes-ethiopia-as-africas-top-coffee-exporter-after-8-6-million-bags/'],
+ ['Africa’s coffee exports and green-bean share (ICO via Eagle Online, July 2026)','https://eagle.co.ug/2026/07/13/africas-coffee-exports-fall-24-as-uganda-ethiopia-shipments-decline/'],
+ ['Global coffee output and Ethiopia’s record crop (Food Business MEA)','https://www.foodbusinessmea.com/global-coffee-output-to-hit-record-10-7m-tonnes-in-2025-26-usda/'],
+ ['EUDR postponed to 30 December 2026 (AGRINFO)','https://agrinfo.eu/book-of-reports/review-of-eu-deforestation-regulation-simplification/'],
+ ['AfCFTA status update (AmCham South Africa, March 2026)','https://www.amcham.co.za/sites/default/files/content-files/Newsletter%20on%20the%20AfCFTA%20-%20March%202026.pdf'],
+ ['Morocco Offer green hydrogen selections (Morocco World News, March 2025)','https://www.moroccoworldnews.com/2025/03/180650/morocco-selects-five-investors-for-31-9-billion-green-hydrogen-projects/'],
+ ['Seven hydrogen projects, 20 GW and 10 GW electrolysis (maroc.ma)','https://www.maroc.ma/en/news/morocco-offer-provides-strong-boost-investment-renewable-energy-infrastructure'],
+ ['Dakhla–Casablanca HVDC deal with Taqa–Nareva–FM6I (Le360)','https://fr.le360.ma/economie/autoroute-electrique-sud-centre-les-dessous-du-deal-entre-lonee-et-le-consortium-taqa-nareva-fm6i_PX3PUQUNGFGODDSWESPNYDKBAM/'],
+ ['Spain, Portugal, France interconnections and Sila Atlantik terms (North Africa Post)','https://northafricapost.com/?p=99051'],
+ ['Southward 400 kV line to Mauritania (North Africa Post)','https://northafricapost.com/?p=98805'],
+ ['Sila Atlantik stalls over governance (Morocco World News, July 2026)','https://www.moroccoworldnews.com/2026/07/330907/morocco-germany-30-billion-power-cable-stalls-over-governance-disputes/'],
+ ['Xlinks statement on the UK decision (June 2025)','https://xlinks.co/?p=6578'],
+ ['Renewables share rises to 46% (North Africa Post)','https://northafricapost.com/97334-moroccos-renewables-share-rises-to-46-as-investments-accelerate.html'],
+ ['Gotion Kenitra start-up (Morocco World News, Oct 2026)','https://www.moroccoworldnews.com/2026/10/341754/gotion-to-launch-moroccos-first-battery-gigafactory-in-kenitra-the-week-of-october-20/'],
+ ['Kenitra–Marrakech high-speed line passes 30% (Morocco World News, May 2026)','https://www.moroccoworldnews.com/2026/05/309066/kenitra-marrakech-lgv-project-hits-30-progress-set-for-2029-delivery/'],
+ ['Lobito corridor financing and DRC concession (Further Africa, Sept 2026)','https://furtherafrica.com/2026/09/12/lobito-corridor-railway-turns-mineral-ambition-into-reality/'],
+ ['Atlantic Initiative and Sahel support (Middle East Forum)','https://www.meforum.org/mef-observer/morocco-wants-to-become-the-sahels-gateway-to-the-atlantic'],
+ ['Morocco’s space program (North Africa Post)','https://northafricapost.com/?p=96319'],
+ ['Dakhla 500 MW green data centre studies (Médias24, April 2026)','https://medias24.com/2026/04/17/dakhla-500-mw-green-data-center-megaproject-launched-to-bolster-moroccos-digital-sovereignty-1661807/'],
+ ['Forests of Morocco acceleration phase (Yabiladi)','https://en.yabiladi.com/articles/details/197935/whatsapp:/send'],
+ ['UN Security Council Resolution 2797 (The New Arab, Oct 2025)','https://www.newarab.com/news/un-security-council-backs-morocco-plan-w-sahara-autonomy'],
+ ['Resolution 2797 critique (Western Sahara Resource Watch)','https://wsrw.org/en/news/uns-western-sahara-vote-raises-more-questions-than-it-answers'],
+ ['EU–Morocco amendment on Western Sahara products (EJIL: Talk!)','https://www.ejiltalk.org/how-not-to-trade-with-occupying-powers-western-sahara-and-the-amendment-to-the-eu-moroccan-association-agreements/'],
+ ['Moroccan textile sector and EU dependence (IFC, 2026)','https://www.ifc.org/content/dam/ifc/doc/2026/scaling-circularity-in-morocco-s-textile-industry.pdf'],
+ ['Tiznit–Dakhla expressway completed (Morocco World News, Jan 2025)','https://www.moroccoworldnews.com/2025/01/367578/morocco-opens-tiznit-dakhla-fast-freeway']
+];
+
+const NOTES = `
+<h2>How to use it</h2>
+<p>Drag the timeline or press Play to watch the buildout from 2025 to 2050. Click any marker or line for details. The Lines and Builds tabs list everything on the map; selecting an item highlights it and moves the map. Press Escape or “Clear highlight” to reset.</p>
+<h2>Status and evidence</h2>
+<p>Every item is marked as a real project or as a proposal in this plan. Real items carry their status as reported up to November 2026. Completion years after that are official targets where the item says so, and scenario years otherwise. Volumes on flow lines and the indicator tiles beyond 2026 are this plan’s scenario, not forecasts by the projects’ owners.</p>
+<p>Routes are schematic: sea lanes are drawn offshore and land corridors follow real towns, but neither is a navigation track. Several locations are approximate and say so.</p>
+<h2>Western Sahara</h2>
+<p>Dakhla, Laâyoune, Boujdour and the Guerguerat crossing are in Western Sahara, a territory whose final status is disputed. Morocco administers most of it and considers it part of its territory; the Polisario Front, backed by Algeria, seeks independence, and the UN lists it as a non-self-governing territory. In October 2025 UN Security Council Resolution 2797 called for negotiations taking Morocco’s autonomy proposal as their basis; supporters called it a breakthrough, while critics, including a former UN envoy, said it tilts a process meant to deliver self-determination. Items located in the territory are flagged in their pop-ups. Borders on the basemap come from OpenStreetMap via CARTO.</p>
+<h2>Colour and accessibility</h2>
+<p>Sector colours were checked for separation under protan and deutan colour-vision deficiency and for normal vision across all pairs. Shape carries status, dash pattern carries transport mode, and every item is also listed in text. Animated flows stop if your system asks for reduced motion, or with the switch in the Layers box.</p>
+<h2>Sources</h2>
+<ul class="small" id="srcList"></ul>
+<p class="small muted">Prepared November 2026. A strategy scenario for discussion, not investment or legal advice.</p>
+`;
+
+/* =========================================================
+   7. Map
+   ========================================================= */
+const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const state = {year:TODAY, on:new Set(ORDER), realOnly:false, ghosts:true, shelved:false, motion:!reducedMotion, sel:null};
+
+const map = L.map('map', {zoomControl:false, worldCopyJump:false, minZoom:2, maxZoom:12, zoomSnap:.5, preferCanvas:false});
+L.control.zoom({position:'bottomright'}).addTo(map);
+map.createPane('labels'); map.getPane('labels').style.zIndex = 350; map.getPane('labels').style.pointerEvents = 'none';
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+  subdomains:'abcd', maxZoom:19, className:'tiles-base',
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {subdomains:'abcd', maxZoom:19, pane:'labels', className:'tiles-labels'}).addTo(map);
+function homeView(){ const w = document.getElementById('map').clientWidth; if(w < 700) map.setView([18,0], 2.5); else map.setView([20,10], 3.5); }
+homeView();
+map.setMaxBounds(L.latLngBounds([[-50,-80],[75,80]]));
+
+const byId = {};
+const STAR = '<svg viewBox="-11 -11 22 22" aria-hidden="true"><rect x="-6.2" y="-6.2" width="12.4" height="12.4"/><rect x="-6.2" y="-6.2" width="12.4" height="12.4" transform="rotate(45)"/></svg>';
+
+function nodeState(o, y){
+  if(o.shelved) return 'shelved';
+  if(y < o.y0) return 'future';
+  if(o.y1 && y < o.y1) return 'building';
+  return 'online';
+}
+function interp(pts, y){
+  if(!pts||!pts.length) return null;
+  if(y <= pts[0][0]) return y < pts[0][0] ? 0 : pts[0][1];
+  for(let i=1;i<pts.length;i++){ if(y <= pts[i][0]){ const a=pts[i-1], b=pts[i]; return a[1] + (b[1]-a[1])*(y-a[0])/(b[0]-a[0]); } }
+  return pts[pts.length-1][1];
+}
+function makeIcon(n, st){
+  const shape = n.hub ? 'hub' : (n.real ? 'dot' : 'dia');
+  const cls = 'mk mk-'+shape+' st-'+st+(n.origin?' mk-origin':'');
+  const sz = n.hub ? 22 : 18;
+  return L.divIcon({className:'mkw'+(state.sel===n.id?' is-sel':''), html:'<span class="'+cls+'" style="--c:'+SECT[n.s].c+'">'+(n.hub?STAR:'')+'</span>', iconSize:[sz,sz], iconAnchor:[sz/2,sz/2], popupAnchor:[0,-9]});
+}
+function deliverableText(s){ const d=SECT[s].d; return d ? SECT[s].label+', deliverable '+d : SECT[s].label; }
+function yearsText(o){
+  const y1 = o.y1 || o.y0;
+  if(o.shelved) return 'Shelved in '+o.y0;
+  if(o.y0===y1 && y1<=2025) return y1===2025 ? 'Existing' : 'In service since '+y1;
+  if(y1 <= TODAY) return o.y0+' to '+y1+', now in service';
+  if(y1 > o.y0) return o.y0+' to '+y1+(o.y1o ? ' (official date)' : ' (scenario year)');
+  return 'From '+o.y0;
+}
+function stateText(o, st, y){
+  if(st==='shelved') return 'Shelved';
+  if(st==='future') return 'Not started in '+y;
+  if(st==='building') return (o.real ? 'Under development in ' : 'Proposed, building in ')+y;
+  return o.real ? (o.y1 > TODAY ? 'Online by '+y+' in this scenario' : 'Operating') : 'Running in '+y+' (proposal)';
+}
+const WS_NOTE = '<p class="ws">Located in Western Sahara, a territory whose status is disputed. See Notes.</p>';
+function nodePopup(n){
+  const st = nodeState(n, state.year);
+  const area = n.forest ? '<dt>Restored</dt><dd>'+Math.round(interp(n.forest, state.year)).toLocaleString('en')+'k ha in '+state.year+(state.year>TODAY?' (scenario)':'')+'</dd>' : '';
+  return '<div class="pp"><div class="pp-k"><i style="--c:'+SECT[n.s].c+'"></i>'+deliverableText(n.s)+'</div>'+
+    '<h3>'+n.n+'</h3><div class="badges"><span class="bdg'+(n.real?' real':'')+'">'+(n.real?'Real project':'Proposal in this plan')+'</span><span class="bdg">'+stateText(n,st,state.year)+'</span></div>'+
+    '<dl><dt>Timeline</dt><dd>'+yearsText(n)+'</dd>'+(n.cap?'<dt>Scale</dt><dd>'+n.cap+'</dd>':'')+area+'</dl>'+
+    (n.now?'<p>'+(n.real?'<span class="muted">As reported: </span>':'')+n.now+'</p>':'')+(n.why?'<p class="why">'+n.why+'</p>':'')+(n.ws?WS_NOTE:'')+'</div>';
+}
+function linePopup(l){
+  const st = nodeState(l, state.year), v = l.vol ? interp(l.vol, state.year) : null;
+  const basis = {real:'Real project', mixed:'Real corridor, proposed flow', concept:'Proposal in this plan'}[l.basis];
+  return '<div class="pp"><div class="pp-k"><i style="--c:'+SECT[l.s].c+'"></i>'+deliverableText(l.s)+', '+MODES[l.mode].toLowerCase()+'</div>'+
+    '<h3>'+l.n+'</h3><div class="badges"><span class="bdg'+(l.basis==='real'?' real':'')+'">'+basis+'</span><span class="bdg">'+stateText({real:l.basis!=='concept', y1:l.y1, y0:l.y0}, st, state.year)+'</span></div>'+
+    '<dl><dt>From</dt><dd>'+l.from+'</dd><dt>To</dt><dd>'+l.to+'</dd><dt>Timeline</dt><dd>'+yearsText(l)+'</dd>'+
+    (v!=null && v>0 ? '<dt>Volume</dt><dd>'+(v<10? v.toFixed(1): Math.round(v))+' '+l.unit+' in '+state.year+' (scenario)</dd>':'')+'</dl>'+
+    '<p class="why">'+l.note+'</p>'+(l.ws?WS_NOTE:'')+'</div>';
+}
+
+/* nodes */
+NODES.forEach(n=>{
+  byId[n.id] = n; n.kind='node';
+  n.marker = L.marker(n.ll, {icon:makeIcon(n,'online'), title:n.n, alt:n.n, keyboard:true, riseOnHover:true});
+  n.marker.bindPopup(()=>nodePopup(n), {maxWidth:320, autoPanPadding:[40,40]});
+  n.marker.bindTooltip(n.n, {className:'tt', direction:'top', offset:[0,-8]});
+  n.marker.on('click', ()=>select(n.id, {fly:false, open:false}));
+  if(n.forest){
+    n.circle = L.circle(n.ll, {radius:1, color:SECT.frontier.c, weight:1, opacity:.6, fillColor:SECT.frontier.c, fillOpacity:.16, interactive:false, className:'forest'});
+  }
+});
+
+/* lines */
+const SMOOTH = {sea:1, pipeline:1, cable:1, hvdc:1, canal:0, grid:0, road:0, rail:0, data:0};
+LINES.forEach(l=>{
+  byId[l.id] = l; l.kind='line'; l.parts=[]; l.vmax = l.vol ? Math.max.apply(null, l.vol.map(p=>p[1])) : 1;
+  const c = SECT[l.s].c, all=[];
+  l.paths.forEach(raw=>{
+    const pts = SMOOTH[l.mode] ? smooth(raw, 5) : raw;
+    pts.forEach(p=>all.push(p));
+    const base = (l.basis!=='concept') ? L.polyline(pts, {color:c, weight:4, opacity:l.basis==='real'?.26:.14, interactive:false, className:'ln ln-base'}) : null;
+    const flow = L.polyline(pts, {color:c, weight:MODE_W[l.mode], opacity:.95, interactive:false, className:'ln ln-flow m-'+l.mode});
+    const hit = L.polyline(pts, {color:'#000', weight:14, opacity:0, className:'ln-hit', bubblingMouseEvents:false});
+    hit.bindTooltip(l.n, {className:'tt', sticky:true});
+    hit.on('click', e=>{ select(l.id, {fly:false, open:false}); L.popup({maxWidth:320}).setLatLng(e.latlng).setContent(linePopup(l)).openOn(map); });
+    l.parts.push({base, flow, hit});
+  });
+  l.bounds = L.latLngBounds(all);
+});
+
+function show(layer, vis){ if(!layer) return; const has = map.hasLayer(layer); if(vis && !has) layer.addTo(map); else if(!vis && has) map.removeLayer(layer); }
+function setCls(layer, cls, on){ const el = layer && layer.getElement && layer.getElement(); if(el) el.classList.toggle(cls, !!on); }
+
+function render(){
+  const y = state.year;
+  document.getElementById('map').classList.toggle('no-motion', !state.motion);
+  NODES.forEach(n=>{
+    const st = nodeState(n, y);
+    let vis = state.on.has(n.s) && (!state.realOnly || n.real);
+    if(st==='future' && !state.ghosts) vis = false;
+    show(n.marker, vis);
+    if(vis && n._st !== st){ n.marker.setIcon(makeIcon(n, st)); n._st = st; }
+    if(n.circle){
+      const ha = interp(n.forest, y)*1000; // hectares
+      const cvis = vis && st!=='future' && ha>0;
+      show(n.circle, cvis);
+      if(cvis) n.circle.setRadius(Math.sqrt(ha*10000/Math.PI));
+    }
+  });
+  LINES.forEach(l=>{
+    const st = nodeState(l, y);
+    let vis = state.on.has(l.s) && (!state.realOnly || l.basis!=='concept');
+    if(st==='future' && !state.ghosts) vis = false;
+    if(st==='shelved' && !state.shelved) vis = false;
+    const w = l.vol ? 1.6 + 2.6*(interp(l.vol, y)/l.vmax) : MODE_W[l.mode];
+    l.parts.forEach(p=>{
+      const hadBase = p.base && map.hasLayer(p.base);
+      show(p.base, vis && (st==='online')); show(p.flow, vis); show(p.hit, vis);
+      if(p.base && !hadBase && map.hasLayer(p.base)) p.base.bringToBack();
+      if(vis){
+        p.flow.setStyle({weight: st==='online' ? w : Math.max(1.4, MODE_W[l.mode]*.7)});
+        setCls(p.flow,'is-building', st==='building'); setCls(p.flow,'is-ghost', st==='future'); setCls(p.flow,'is-shelved', st==='shelved');
+        const sel = state.sel===l.id;
+        setCls(p.flow,'is-sel', sel); setCls(p.base,'is-sel', sel);
+      }
+    });
+  });
+  updateYearUI(); updateEvents(); updateTiles();
+}
+
+/* selection */
+function clearSel(){
+  if(!state.sel) return;
+  const o = byId[state.sel]; state.sel = null;
+  document.getElementById('map').classList.remove('has-sel');
+  document.getElementById('clearSel').hidden = true;
+  if(o && o.kind==='node'){ const el=o.marker.getElement(); if(el) el.classList.remove('is-sel'); }
+  if(o && o.kind==='line'){ o.parts.forEach(p=>{ setCls(p.flow,'is-sel',0); setCls(p.base,'is-sel',0); }); }
+  document.querySelectorAll('.row.on').forEach(r=>r.classList.remove('on'));
+}
+function select(id, opt){
+  opt = opt || {fly:true, open:true};
+  const o = byId[id]; if(!o) return;
+  clearSel();
+  if(!state.on.has(o.s)){ state.on.add(o.s); syncLegend(); }
+  if(state.realOnly && !(o.kind==='node' ? o.real : o.basis!=='concept')){ state.realOnly=false; document.getElementById('optReal').checked=false; }
+  if(o.shelved && !state.shelved){ state.shelved=true; document.getElementById('optShelved').checked=true; }
+  if(!o.shelved && state.year < o.y0 && !state.ghosts){ setYear(o.y1||o.y0); }
+  state.sel = id;
+  document.getElementById('map').classList.add('has-sel');
+  document.getElementById('clearSel').hidden = false;
+  render();
+  if(o.kind==='node'){
+    const el=o.marker.getElement(); if(el) el.classList.add('is-sel');
+    if(opt.fly){ map.flyTo(o.ll, Math.max(map.getZoom(), o.ll[0]>45?5:6), {duration:.8}); }
+    if(opt.open){ setTimeout(()=>o.marker.openPopup(), opt.fly?850:0); }
+  } else {
+    if(opt.fly){ map.flyToBounds(o.bounds, {padding:[60,60], maxZoom:7, duration:.8}); }
+    if(opt.open){ const pth = o.paths.reduce((a,b)=>b.length>a.length?b:a); const at = pth[Math.floor(pth.length*0.55)]; setTimeout(()=>{ L.popup({maxWidth:320, autoPanPadding:[40,40]}).setLatLng(at).setContent(linePopup(o)).openOn(map); }, opt.fly?850:0); }
+  }
+  document.querySelectorAll('.row[data-id="'+id+'"]').forEach(r=>r.classList.add('on'));
+  if(window.matchMedia('(max-width:900px)').matches && opt.fly) document.getElementById('panel').classList.remove('open');
+}
+map.on('click', clearSel);
+map.on('popupopen', ()=>document.getElementById('mapwrap').classList.add('pp-open'));
+map.on('popupclose', ()=>document.getElementById('mapwrap').classList.remove('pp-open'));
+document.getElementById('clearSel').addEventListener('click', ()=>{ clearSel(); map.closePopup(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ clearSel(); map.closePopup(); } });
+
+/* =========================================================
+   8. Legend and options
+   ========================================================= */
+function lineKey(c, mode, concept){
+  const dash = {sea:'1 6', pipeline:'8 4', hvdc:'10 3 2 3', cable:'5 4', grid:'3 3', road:'6 4', rail:'2 3 6 3', canal:'9 4', data:'.5 4'}[mode||'sea'];
+  return '<svg width="34" height="10" viewBox="0 0 34 10" aria-hidden="true">'+(concept?'':'<line x1="2" y1="5" x2="32" y2="5" stroke="'+c+'" stroke-opacity=".3" stroke-width="5" stroke-linecap="round"/>')+'<line x1="2" y1="5" x2="32" y2="5" stroke="'+c+'" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="'+dash+'"/></svg>';
+}
+const SECT_MODE = {water:'canal', coffee:'sea', paper:'data', power:'hvdc', frontier:'data', industry:'sea', logistics:'road'};
+function buildLegend(){
+  const ul = document.getElementById('lg');
+  ul.innerHTML = ORDER.map(s=>'<li><label><input type="checkbox" data-s="'+s+'" checked>'+lineKey(SECT[s].c, SECT_MODE[s])+'<span>'+SECT[s].label+'</span></label></li>').join('');
+  ul.addEventListener('change', e=>{ const s=e.target.dataset.s; if(!s) return; if(e.target.checked) state.on.add(s); else state.on.delete(s); render(); });
+  const k = document.getElementById('statusKey');
+  const g = (shape, st) => '<span class="mk mk-'+shape+' st-'+st+'" style="--c:#EEE3CB;display:inline-block">'+(shape==='hub'?STAR:'')+'</span>';
+  k.innerHTML = g('dot','online')+'<span>Real project, operating</span>'+g('dot','building')+'<span>Real project, under development</span>'+g('dia','online')+'<span>Proposal in this plan</span>'+g('hub','online')+'<span>Processing or trust hub</span>'+g('dot','future')+'<span>Not yet started</span>';
+}
+function syncLegend(){ document.querySelectorAll('#lg input').forEach(i=>{ i.checked = state.on.has(i.dataset.s); }); }
+document.getElementById('optGhost').addEventListener('change', e=>{ state.ghosts=e.target.checked; render(); });
+document.getElementById('optReal').addEventListener('change', e=>{ state.realOnly=e.target.checked; render(); });
+document.getElementById('optShelved').addEventListener('change', e=>{ state.shelved=e.target.checked; render(); });
+const optMotion = document.getElementById('optMotion');
+optMotion.checked = state.motion;
+optMotion.addEventListener('change', e=>{ state.motion=e.target.checked; render(); });
+
+/* =========================================================
+   9. Panel
+   ========================================================= */
+function glyph(o){
+  if(o.kind==='line') return '<span class="key">'+lineKey(SECT[o.s].c, o.mode, o.basis==='concept')+'</span>';
+  const shape = o.hub ? 'hub' : (o.real ? 'dot' : 'dia');
+  return '<span class="mk mk-'+shape+' st-online glyph" style="--c:'+SECT[o.s].c+'">'+(o.hub?STAR:'')+'</span>';
+}
+function yrLabel(o){ if(o.shelved) return 'shelved'; if(o.y1<=TODAY && o.y0<=TODAY) return o.y0===o.y1 && o.y1<=2025 ? 'existing' : 'since '+o.y1; return (o.y1&&o.y1!==o.y0) ? o.y0+'–'+o.y1 : String(o.y0); }
+function row(o, sub){ return '<li><button class="row" data-id="'+o.id+'">'+glyph(o)+'<span class="t">'+o.n+(sub?'<span class="s">'+sub+'</span>':'')+'</span><span class="y">'+yrLabel(o)+'</span></button></li>'; }
+
+function buildPanel(){
+  document.getElementById('p-arg').innerHTML = ARG;
+  // sequence
+  document.getElementById('p-seq').innerHTML = '<p class="muted small">Morocco’s five deliverables, in the order this plan launches them. The coloured bars on the timeline show when each one is the lead priority; real projects in every sector are already moving.</p><ol class="seq">'+
+    SEQ.map((d,i)=>'<li style="--c:'+SECT[d.s].c+'"><div class="n num">'+(i+1)+'</div><div><h3>'+d.t+'</h3><div class="yrs">'+d.yrs+'</div><p class="role">'+d.role+'</p>'+
+    '<h4>On the ground</h4><ul>'+d.real.map(r=>'<li><button class="go" data-go="'+r[0]+'">'+r[1]+'</button></li>').join('')+'</ul>'+
+    '<h4>This plan adds</h4><ul>'+d.adds.map(r=>'<li><button class="go" data-go="'+r[0]+'">'+r[1]+'</button></li>').join('')+'</ul>'+
+    '<h4>Signals to watch</h4><p class="small">'+d.kpi+'</p><h4>Main risk</h4><p class="small">'+d.risk+'</p></div></li>').join('')+'</ol>';
+  // lines
+  const groups = [['Coffee',['coffee']],['Water',['water']],['Bureaucratic backing',['paper']],['Power, gas and resale',['power']],['Space, science, forests',['frontier']],['Minerals and industry',['industry']],['Ports and corridors',['logistics']]];
+  document.getElementById('p-lin').innerHTML = '<p class="muted small">Every line of delivery on the map. Thick faint underlay means real infrastructure; dashes alone mean a proposed flow. Dash pattern shows the mode.</p>'+
+    groups.map(g=>{ const ls = LINES.filter(l=>g[1].includes(l.s)); return ls.length ? '<div class="grp">'+g[0]+'</div><ul class="rows">'+ls.map(l=>row(l, l.from+' to '+l.to)).join('')+'</ul>' : ''; }).join('');
+  // builds
+  const bld = document.getElementById('p-bld');
+  bld.innerHTML = '<input class="search" id="q" type="search" placeholder="Search builds, places, programs" aria-label="Search builds"><div class="filters" id="bf">'+
+    ORDER.map(s=>'<button class="chip" aria-pressed="true" data-s="'+s+'" style="--c:'+SECT[s].c+'"><i></i>'+SECT[s].label+'</button>').join('')+
+    '<button class="chip" aria-pressed="false" id="bReal">Real only</button></div><ul class="rows" id="blist"></ul>';
+  const f = {on:new Set(ORDER), real:false, q:''};
+  function drawB(){
+    const q = f.q.trim().toLowerCase();
+    const items = NODES.filter(n=>f.on.has(n.s) && (!f.real||n.real) && (!q || (n.n+' '+(n.cap||'')+' '+(n.now||'')+' '+(n.why||'')).toLowerCase().includes(q)))
+      .sort((a,b)=>(a.y1||a.y0)-(b.y1||b.y0) || a.n.localeCompare(b.n));
+    document.getElementById('blist').innerHTML = items.length ? items.map(n=>row(n, (n.real?'Real':'Proposal')+', '+SECT[n.s].label.toLowerCase())).join('') : '<li class="muted small" style="padding:8px 6px">No builds match. Clear the search or turn a sector back on.</li>';
+  }
+  bld.addEventListener('click', e=>{
+    const c = e.target.closest('.chip'); if(!c) return;
+    if(c.id==='bReal'){ f.real=!f.real; c.setAttribute('aria-pressed', f.real); }
+    else { const s=c.dataset.s; if(f.on.has(s)) f.on.delete(s); else f.on.add(s); c.setAttribute('aria-pressed', f.on.has(s)); }
+    drawB();
+  });
+  bld.addEventListener('input', e=>{ if(e.target.id==='q'){ f.q=e.target.value; drawB(); } });
+  drawB();
+  // notes
+  document.getElementById('p-not').innerHTML = NOTES;
+  document.getElementById('srcList').innerHTML = SOURCES.map(s=>'<li><a href="'+s[1]+'" target="_blank" rel="noopener">'+s[0]+'</a></li>').join('');
+}
+document.getElementById('panel').addEventListener('click', e=>{
+  const r = e.target.closest('[data-id],[data-go]');
+  if(r){ select(r.dataset.id || r.dataset.go); return; }
+  const t = e.target.closest('[data-tab]'); if(t) openTab(t.dataset.tab);
+});
+const TABS = ['arg','seq','lin','bld','not'];
+function openTab(k){
+  TABS.forEach(t=>{ const b=document.getElementById('t-'+t), p=document.getElementById('p-'+t), on=t===k;
+    b.setAttribute('aria-selected', on); b.tabIndex = on?0:-1; p.hidden = !on; });
+  document.querySelector('.tabpanels').scrollTop = 0;
+}
+document.querySelector('.tabs').addEventListener('click', e=>{ const b=e.target.closest('[role=tab]'); if(b) openTab(b.id.slice(2)); });
+document.querySelector('.tabs').addEventListener('keydown', e=>{
+  if(e.key!=='ArrowRight' && e.key!=='ArrowLeft') return;
+  const cur = TABS.findIndex(t=>document.getElementById('t-'+t).getAttribute('aria-selected')==='true');
+  const nx = TABS[(cur + (e.key==='ArrowRight'?1:TABS.length-1)) % TABS.length];
+  openTab(nx); document.getElementById('t-'+nx).focus();
+});
+document.getElementById('panelToggle').addEventListener('click', ()=>document.getElementById('panel').classList.add('open'));
+document.getElementById('panelClose').addEventListener('click', ()=>document.getElementById('panel').classList.remove('open'));
+
+/* =========================================================
+   10. Timeline, events, indicator tiles
+   ========================================================= */
+const pct = y => ((y - Y0) / (Y1 - Y0) * 100);
+function buildTimeline(){
+  document.getElementById('tlLabels').innerHTML = PHASES.map(p=>'<span>'+p.lab+'</span>').join('')+'<span class="sp"></span><span class="msl">Milestones</span>';
+  document.getElementById('bars').innerHTML = PHASES.map(p=>'<div class="bar" style="--c:'+SECT[p.s].c+'" title="'+p.lab+': lead priority '+p.a+'–'+p.b+'"><i style="left:'+pct(p.a)+'%;width:'+(pct(p.b)-pct(p.a))+'%"></i>'+(p.b<Y1?'<i class="tail" style="left:'+pct(p.b)+'%;width:'+(100-pct(p.b))+'%"></i>':'')+'</div>').join('');
+  let ax=''; for(let y=Y0;y<=Y1;y++){ ax += '<span class="tick" style="left:'+pct(y)+'%"></span>'; if(y%5===0) ax += '<span style="left:'+pct(y)+'%">'+y+'</span>'; }
+  document.getElementById('axis').innerHTML = ax;
+  document.getElementById('today').style.left = pct(TODAY + 10/12)+'%';
+  document.getElementById('ms').innerHTML = MILESTONES.map(m=>'<button type="button" class="'+(m.real?'':'sc')+'" style="left:'+pct(m.y)+'%" data-y="'+m.y+'" title="'+m.y+': '+m.t.replace(/"/g,'&quot;')+'" aria-label="'+m.y+' milestones: '+m.t.replace(/"/g,'&quot;')+'"></button>').join('');
+  document.getElementById('ms').addEventListener('click', e=>{ const b=e.target.closest('button'); if(b){ stop(); setYear(+b.dataset.y); } });
+  const yr = document.getElementById('yr');
+  yr.addEventListener('input', ()=>{ stop(); setYear(+yr.value); });
+}
+function setYear(y){ state.year = Math.max(Y0, Math.min(Y1, Math.round(y))); document.getElementById('yr').value = state.year; render(); }
+function updateYearUI(){
+  const y = state.year;
+  document.getElementById('yearBig').textContent = y;
+  document.getElementById('yearNote').textContent = y < TODAY ? 'Reported status' : (y===TODAY ? 'Reported status, November 2026' : 'Scenario year: official targets plus this plan');
+  document.getElementById('cursor').style.left = pct(y)+'%';
+  document.getElementById('yr').setAttribute('aria-valuetext', y + (y>TODAY?' (scenario)':''));
+}
+function updateEvents(){
+  const y = state.year, items=[];
+  [...NODES, ...LINES].forEach(o=>{
+    if(!state.on.has(o.s) || (state.realOnly && !(o.kind==='node'?o.real:o.basis!=='concept'))) return;
+    if(o.shelved){ if(o.y0===y && state.shelved) items.push({o, w:'Shelved'}); return; }
+    if(o.y1===y && o.y1>=2025) items.push({o, w: o.y1===o.y0 ? (y<=TODAY?'In service':'Starts') : 'Comes online'});
+    else if(o.y0===y && o.y1!==o.y0) items.push({o, w:'Work starts'});
+  });
+  const ms = MILESTONES.filter(m=>m.y===y);
+  const box = document.getElementById('events');
+  const shown = items.filter(i=>!(i.o.y0===i.o.y1 && i.o.y0<=2025));
+  const more = shown.length > 6 ? '<li class="more">and '+(shown.length-6)+' more in the Builds and Lines tabs</li>' : '';
+  const lis = shown.slice(0,6).map(i=>'<li><button data-id="'+i.o.id+'"><span class="dot" style="--c:'+SECT[i.o.s].c+'"></span><span>'+i.o.n+'<span class="what">'+i.w+(i.o.kind==='node'?(i.o.real?'':', proposal'):(i.o.basis==='concept'?', proposal':''))+'</span></span></button></li>').join('');
+  box.innerHTML = '<h2>In '+y+'</h2>'+(ms.length?'<p class="small muted" style="margin:0 0 6px">'+ms.map(m=>m.t).join('; ')+'</p>':'')+
+    (lis ? '<ul>'+lis+more+'</ul>' : '<p class="empty">Nothing new comes online this year. Drag the timeline to another year.</p>');
+}
+document.getElementById('events').addEventListener('click', e=>{ const b=e.target.closest('[data-id]'); if(b) select(b.dataset.id); });
+
+function buildTiles(){
+  const wrap = document.getElementById('ind');
+  wrap.innerHTML = METRICS.map(m=>'<div class="tile" data-m="'+m.id+'" title="Hover to read a year, click to jump to it"><span class="lab">'+m.lab+'</span><span><span class="val num" id="v-'+m.id+'"></span><span class="prov" id="pv-'+m.id+'"></span></span><svg id="s-'+m.id+'" viewBox="0 0 96 30" preserveAspectRatio="none" aria-hidden="true"></svg></div>').join('');
+  METRICS.forEach(m=>{
+    const vmax = Math.max.apply(null, m.pts.map(p=>p[1]))*1.05 || 1;
+    const X = y => 2 + (y-Y0)/(Y1-Y0)*92, Yp = v => 27 - v/vmax*24;
+    m.X=X; m.Y=Yp;
+    let solid='', dashed='';
+    for(let y=Y0;y<=Y1;y++){ const pt=X(y).toFixed(2)+','+Yp(interp(m.pts,y)).toFixed(2); if(y<=TODAY) solid += (solid?' L':'M')+pt; if(y>=TODAY) dashed += (dashed?' L':'M')+pt; }
+    const c = SECT[m.s].c, svg = document.getElementById('s-'+m.id);
+    svg.innerHTML = '<line x1="2" y1="27.5" x2="94" y2="27.5" stroke="#24356F" stroke-width="1"/>'+
+      '<path d="'+dashed+'" fill="none" stroke="'+c+'" stroke-opacity=".55" stroke-width="1.6" stroke-dasharray="2 2.5" vector-effect="non-scaling-stroke"/>'+
+      '<path d="'+solid+'" fill="none" stroke="'+c+'" stroke-width="2" vector-effect="non-scaling-stroke"/>'+
+      '<line class="cur" x1="0" y1="2" x2="0" y2="28" stroke="#EEE3CB" stroke-width="1" vector-effect="non-scaling-stroke"/>';
+    const tile = wrap.querySelector('[data-m="'+m.id+'"]');
+    const yearAt = ev => { const r=svg.getBoundingClientRect(); return Math.round(Y0 + Math.max(0,Math.min(1,(ev.clientX-r.left)/r.width))*(Y1-Y0)); };
+    svg.addEventListener('mousemove', ev=>{ drawTile(m, yearAt(ev)); });
+    svg.addEventListener('mouseleave', ()=>drawTile(m, state.year));
+    svg.addEventListener('click', ev=>{ stop(); setYear(yearAt(ev)); });
+  });
+}
+function provOf(m, y){
+  const p = m.pts.find(p=>p[0]===y);
+  if(p) return {r:'Reported', e:'Estimate', t:'Official target', s:'Scenario'}[p[2]];
+  return y<=TODAY ? 'Interpolated' : 'Scenario';
+}
+function drawTile(m, y){
+  const v = interp(m.pts, y);
+  document.getElementById('v-'+m.id).innerHTML = m.fmt(v)+'<small>'+m.unit+'</small>';
+  document.getElementById('pv-'+m.id).textContent = (y===state.year ? '' : y+': ')+provOf(m,y);
+  const cur = document.querySelector('#s-'+m.id+' .cur'); const x = m.X(y);
+  cur.setAttribute('x1', x); cur.setAttribute('x2', x);
+}
+function updateTiles(){ METRICS.forEach(m=>drawTile(m, state.year)); }
+
+/* play */
+let timer = null;
+const playBtn = document.getElementById('play');
+function stop(){ if(timer){ clearInterval(timer); timer=null; } playBtn.textContent='Play'; playBtn.setAttribute('aria-label','Play the buildout from 2025 to 2050'); }
+playBtn.addEventListener('click', ()=>{
+  if(timer){ stop(); return; }
+  if(state.year >= Y1) setYear(Y0);
+  playBtn.textContent='Pause'; playBtn.setAttribute('aria-label','Pause');
+  timer = setInterval(()=>{ if(state.year >= Y1){ stop(); return; } setYear(state.year+1); }, 900);
+});
+playBtn.setAttribute('aria-label','Play the buildout from 2025 to 2050');
+
+/* init */
+if(window.matchMedia('(max-width:900px)').matches) document.getElementById('layers').removeAttribute('open');
+buildLegend(); buildPanel(); buildTimeline(); buildTiles(); render();
+window.addEventListener('resize', ()=>map.invalidateSize());
+function compactYear(){ document.getElementById('yearmark').classList.toggle('compact', map.getZoom() >= 5 || document.getElementById('map').clientWidth < 700); }
+map.on('zoomend', compactYear); compactYear();
+})();
+</script>
+</body>
+</html>
