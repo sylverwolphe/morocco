@@ -963,11 +963,32 @@ const state = {year:TODAY, on:new Set(ORDER), realOnly:false, ghosts:true, shelv
 const map = L.map('map', {zoomControl:false, worldCopyJump:false, minZoom:2, maxZoom:12, zoomSnap:.5, preferCanvas:false});
 L.control.zoom({position:'bottomright'}).addTo(map);
 map.createPane('labels'); map.getPane('labels').style.zIndex = 350; map.getPane('labels').style.pointerEvents = 'none';
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-  subdomains:'abcd', maxZoom:19, className:'tiles-base',
-  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-}).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {subdomains:'abcd', maxZoom:19, pane:'labels', className:'tiles-labels'}).addTo(map);
+/* ---------------------------------------------------------
+   BASEMAP KEY: paste your free CARTO key between the quotes.
+   Get one at https://carto.com/basemaps/apikey
+   Left empty, the map falls back to Esri's keyless dark basemap.
+   --------------------------------------------------------- */
+const CARTO_KEY = 'cb1_56je_1_e034c03d65a968141b9bcb25';
+
+const OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+if (CARTO_KEY) {
+  const k = encodeURIComponent(CARTO_KEY);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}.png?key=' + k, {
+    subdomains:'abcd', maxZoom:19, className:'tiles-base',
+    attribution: OSM_ATTR + ' &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  }).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_only_labels/{z}/{x}/{y}.png?key=' + k, {
+    subdomains:'abcd', maxZoom:19, pane:'labels', className:'tiles-labels'
+  }).addTo(map);
+} else {
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom:16, className:'tiles-base',
+    attribution:'Tiles &copy; Esri, HERE, Garmin, ' + OSM_ATTR
+  }).addTo(map);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom:16, pane:'labels', className:'tiles-labels'
+  }).addTo(map);
+}
 function homeView(){ const w = document.getElementById('map').clientWidth; if(w < 700) map.setView([18,0], 2.5); else map.setView([20,10], 3.5); }
 homeView();
 map.setMaxBounds(L.latLngBounds([[-50,-80],[75,80]]));
